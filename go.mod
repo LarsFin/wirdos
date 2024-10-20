@@ -1,4 +1,4 @@
-module github.com/wirdos/v2
+module github.com/wirdos
 
 go 1.23
 

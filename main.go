@@ -5,7 +5,10 @@ import (
 
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
-	"github.com/wirdos/v2/resources"
+	"github.com/wirdos/actors"
+	"github.com/wirdos/input"
+	"github.com/wirdos/resources"
+	"github.com/wirdos/util"
 )
 
 func run() {
@@ -28,15 +31,27 @@ func run() {
 
 	sprite := pixel.NewSprite(pic, pic.Bounds())
 
-	r1 := pixel.R(0, 0, 100, 100)
-	r2 := pixel.R(50, 50, 150, 150)
+	ipos := window.Bounds().Center()
 
-	r1.Intersect(r2)
-
-	window.Clear(pixel.RGB(0, 0, 0))
-	sprite.Draw(window, pixel.IM.Moved(window.Bounds().Center()))
+	sprite.Draw(window, pixel.IM.Moved(ipos))
+	character := actors.NewCharacter(ipos, 64)
+	input := input.NewKeyboardMouse(window)
 
 	for !window.Closed() {
+		util.UpdateDeltaTime()
+
+		input.Update()
+
+		if input.Exit() {
+			window.SetClosed(true)
+		}
+
+		window.Clear(pixel.RGB(1, 1, 1))
+
+		character.Update(input.Direction())
+
+		sprite.Draw(window, pixel.IM.Moved(character.Pos()))
+
 		window.Update()
 	}
 }
