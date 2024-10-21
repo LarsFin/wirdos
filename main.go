@@ -31,10 +31,19 @@ func run() {
 
 	sprite := pixel.NewSprite(pic, pic.Bounds())
 
-	ipos := window.Bounds().Center()
+	pic, err = resources.LoadPNG("wall")
 
-	sprite.Draw(window, pixel.IM.Moved(ipos))
-	character := actors.NewCharacter(ipos, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	wall := pixel.NewSprite(pic, pic.Bounds())
+
+	ipos := window.Bounds().Center()
+	window.SetMatrix(pixel.IM.Scaled(ipos, 4))
+
+	character := actors.NewCharacter(ipos, 72, pixel.V(8, 16))
+	solid := actors.NewSolid(ipos.Add(pixel.V(48, 0)), pixel.V(32, 32))
 	input := input.NewKeyboardMouse(window)
 
 	for !window.Closed() {
@@ -48,8 +57,9 @@ func run() {
 
 		window.Clear(pixel.RGB(1, 1, 1))
 
-		character.Update(input.Direction())
+		character.Update(input.Direction(), solid)
 
+		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 0))))
 		sprite.Draw(window, pixel.IM.Moved(character.Pos()))
 
 		window.Update()
