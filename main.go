@@ -43,8 +43,13 @@ func run() {
 	window.SetMatrix(pixel.IM.Scaled(ipos, 4))
 
 	character := actors.NewCharacter(ipos, 72, pixel.V(8, 16))
-	solid := actors.NewSolid(ipos.Add(pixel.V(48, 0)), pixel.V(32, 32))
 	input := input.NewKeyboardMouse(window)
+
+	solids := make([]*actors.Solid, 0)
+
+	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(48, 0)), pixel.V(32, 32)))
+	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(48, 32)), pixel.V(32, 32)))
+	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(16, 64)), pixel.V(32, 32)))
 
 	for !window.Closed() {
 		util.UpdateDeltaTime()
@@ -57,9 +62,12 @@ func run() {
 
 		window.Clear(pixel.RGB(1, 1, 1))
 
-		character.Update(input.Direction(), solid)
+		character.Update(input.Direction(), solids)
 
 		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 0))))
+		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 32))))
+		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(16, 64))))
+
 		sprite.Draw(window, pixel.IM.Moved(character.Pos()))
 
 		window.Update()

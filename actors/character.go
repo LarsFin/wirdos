@@ -11,7 +11,7 @@ type Character struct {
 	collisionDimensions pixel.Vec
 }
 
-func (c *Character) Update(direction pixel.Vec, solid *Solid) {
+func (c * Character) Update(direction pixel.Vec, solids []*Solid) {
 	if direction.Len() > 0 {
 		normal := direction.Unit()
 		currentColliderFrame := pixel.R(
@@ -25,26 +25,44 @@ func (c *Character) Update(direction pixel.Vec, solid *Solid) {
 
 		if normal.X != 0 {
 			lateralShift := normal.X * c.speed * util.DeltaTime
-			lateralCollision := solid.Collides(currentColliderFrame.Moved(pixel.V(lateralShift, 0)))
-			newPos.X = (c.pos.X + lateralShift) - (lateralCollision.Max.X - lateralCollision.Min.X) * direction.X
+			lateralPush := float64(0)
+
+			for _, solid := range solids {
+				lateralSolidPush := solid.Collides(currentColliderFrame.Moved(pixel.V(lateralShift, 0))).W()
+				
+				if lateralSolidPush > lateralPush {
+					lateralPush = lateralSolidPush
+				}
+			}
+
+			newPos.X = (c.pos.X + lateralShift) - (lateralPush * direction.X)
 		}
 
 		if normal.Y != 0 {
 			verticalShift := normal.Y * c.speed * util.DeltaTime
-			verticalCollision := solid.Collides(currentColliderFrame.Moved(pixel.V(0, verticalShift)))
-			newPos.Y = (c.pos.Y + verticalShift) - (verticalCollision.Max.Y - verticalCollision.Min.Y) * direction.Y
+			verticalPush := float64(0)
+
+			for _, solid := range solids {
+				verticalSolidPush := solid.Collides(currentColliderFrame.Moved(pixel.V(0, verticalShift))).H()
+
+				if verticalSolidPush > verticalPush {
+					verticalPush = verticalSolidPush
+				}
+			}
+
+			newPos.Y = (c.pos.Y + verticalShift) - verticalPush * direction.Y
 		}
 
 		// If a character is moving diagonally against a wall, resolve the direction so they move straight, thus
 		// faster so the player doesn't have to ensure they're directing in a straight line
 		if normal.X != 0 && normal.Y != 0 {
 			if newPos.X != c.pos.X && newPos.Y == c.pos.Y {
-				c.Update(pixel.V(direction.X, 0), solid)
+				c.Update(pixel.V(direction.X, 0), solids)
 				return
 			}
 
 			if newPos.Y != c.pos.Y && newPos.X == c.pos.X {
-				c.Update(pixel.V(0, direction.Y), solid)
+				c.Update(pixel.V(0, direction.Y), solids)
 				return
 			}
 		}
