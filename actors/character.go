@@ -35,6 +35,20 @@ func (c *Character) Update(direction pixel.Vec, solid *Solid) {
 			newPos.Y = (c.pos.Y + verticalShift) - (verticalCollision.Max.Y - verticalCollision.Min.Y) * direction.Y
 		}
 
+		// If a character is moving diagonally against a wall, resolve the direction so they move straight, thus
+		// faster so the player doesn't have to ensure they're directing in a straight line
+		if normal.X != 0 && normal.Y != 0 {
+			if newPos.X != c.pos.X && newPos.Y == c.pos.Y {
+				c.Update(pixel.V(direction.X, 0), solid)
+				return
+			}
+
+			if newPos.Y != c.pos.Y && newPos.X == c.pos.X {
+				c.Update(pixel.V(0, direction.Y), solid)
+				return
+			}
+		}
+
 		c.pos = newPos
 	}
 }
