@@ -2,6 +2,7 @@ package actors
 
 import (
 	"github.com/gopxl/pixel/v2"
+	"github.com/wirdos/stage"
 	"github.com/wirdos/util"
 )
 
@@ -11,7 +12,7 @@ type Character struct {
 	collisionDimensions pixel.Vec
 }
 
-func (c * Character) Update(direction pixel.Vec, solids []*Solid) {
+func (c * Character) Update(direction pixel.Vec, walls []*stage.Wall) {
 	if direction.Len() > 0 {
 		normal := direction.Unit()
 		currentColliderFrame := pixel.R(
@@ -27,8 +28,8 @@ func (c * Character) Update(direction pixel.Vec, solids []*Solid) {
 			lateralShift := normal.X * c.speed * util.DeltaTime
 			lateralPush := float64(0)
 
-			for _, solid := range solids {
-				lateralSolidPush := solid.Collides(currentColliderFrame.Moved(pixel.V(lateralShift, 0))).W()
+			for _, wall := range walls {
+				lateralSolidPush := wall.Collides(currentColliderFrame.Moved(pixel.V(lateralShift, 0))).W()
 				
 				if lateralSolidPush > lateralPush {
 					lateralPush = lateralSolidPush
@@ -42,7 +43,7 @@ func (c * Character) Update(direction pixel.Vec, solids []*Solid) {
 			verticalShift := normal.Y * c.speed * util.DeltaTime
 			verticalPush := float64(0)
 
-			for _, solid := range solids {
+			for _, solid := range walls {
 				verticalSolidPush := solid.Collides(currentColliderFrame.Moved(pixel.V(0, verticalShift))).H()
 
 				if verticalSolidPush > verticalPush {
@@ -57,12 +58,12 @@ func (c * Character) Update(direction pixel.Vec, solids []*Solid) {
 		// faster so the player doesn't have to ensure they're directing in a straight line
 		if normal.X != 0 && normal.Y != 0 {
 			if newPos.X != c.pos.X && newPos.Y == c.pos.Y {
-				c.Update(pixel.V(direction.X, 0), solids)
+				c.Update(pixel.V(direction.X, 0), walls)
 				return
 			}
 
 			if newPos.Y != c.pos.Y && newPos.X == c.pos.X {
-				c.Update(pixel.V(0, direction.Y), solids)
+				c.Update(pixel.V(0, direction.Y), walls)
 				return
 			}
 		}

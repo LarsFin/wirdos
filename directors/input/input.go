@@ -1,6 +1,8 @@
 package input
 
-import "github.com/gopxl/pixel/v2"
+import (
+	"github.com/gopxl/pixel/v2"
+)
 
 type Input interface {
 	Update()

@@ -45,3 +45,4 @@ func (kbm *KeyboardMouse) Exit() bool {
 func NewKeyboardMouse(window *opengl.Window) *KeyboardMouse {
 	return &KeyboardMouse{window: window}
 }
+

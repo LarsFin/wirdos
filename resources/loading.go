@@ -36,7 +36,7 @@ func LoadPNG(path string) (pixel.Picture, error) {
 }
 
 func LoadJSON[K any](path string) (*K, error) {
-	path = fmt.Sprintf("assets/%s.json", path)
+	path = fmt.Sprintf("assets/data/%s.json", path)
 	file, err := assets.Open(path)
 
 	if err != nil {

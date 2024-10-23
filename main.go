@@ -6,8 +6,9 @@ import (
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
-	"github.com/wirdos/input"
+	"github.com/wirdos/directors/input"
 	"github.com/wirdos/resources"
+	"github.com/wirdos/stage"
 	"github.com/wirdos/util"
 )
 
@@ -45,11 +46,10 @@ func run() {
 	character := actors.NewCharacter(ipos, 72, pixel.V(8, 16))
 	input := input.NewKeyboardMouse(window)
 
-	solids := make([]*actors.Solid, 0)
+	walls := make([]*stage.Wall, 0)
 
-	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(48, 0)), pixel.V(32, 32)))
-	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(48, 32)), pixel.V(32, 32)))
-	solids = append(solids, actors.NewSolid(ipos.Add(pixel.V(16, 64)), pixel.V(32, 32)))
+	walls = append(walls, stage.NewWall(pixel.R(ipos.X+32, ipos.Y-16, ipos.X+64, ipos.Y+48)))
+	walls = append(walls, stage.NewWall(pixel.R(ipos.X, ipos.Y+48, ipos.X+32, ipos.Y+80)))
 
 	for !window.Closed() {
 		util.UpdateDeltaTime()
@@ -62,7 +62,7 @@ func run() {
 
 		window.Clear(pixel.RGB(1, 1, 1))
 
-		character.Update(input.Direction(), solids)
+		character.Update(input.Direction(), walls)
 
 		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 0))))
 		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 32))))
