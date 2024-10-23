@@ -14,7 +14,7 @@ import (
 
 func run() {
 	wcfg := opengl.WindowConfig{
-		Title: "wirdos",
+		Title:  "wirdos",
 		Bounds: pixel.R(0, 0, 1240, 720),
 	}
 

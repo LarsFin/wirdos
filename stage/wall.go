@@ -7,8 +7,8 @@ type Wall struct {
 	r pixel.Rect
 }
 
-func (w *Wall) Collides(other pixel.Rect) pixel.Rect {
-	return w.r.Intersect(other)
+func (w *Wall) CollisionArea() pixel.Rect {
+	return w.r
 }
 
 func NewWall(r pixel.Rect) *Wall {
