@@ -2,7 +2,6 @@ package util
 
 import (
 	"github.com/gopxl/pixel/v2"
-	"github.com/wirdos/stage"
 )
 
 type Body struct {
@@ -10,7 +9,7 @@ type Body struct {
 	collider Collider
 }
 
-func (b *Body) Move(velocity pixel.Vec, walls []*stage.Wall) {
+func (b *Body) Move(velocity pixel.Vec, walls []pixel.Rect) {
 	newPos := pixel.V(b.Position.X, b.Position.Y)
 
 	if velocity.X != 0 {
@@ -18,7 +17,7 @@ func (b *Body) Move(velocity pixel.Vec, walls []*stage.Wall) {
 		lateralPush := float64(0)
 
 		for _, wall := range walls {
-			lateralSolidPush := b.collider.CollidesRect(b.Position.Add(pixel.V(lateralShift, 0)), wall.CollisionArea()).W()
+			lateralSolidPush := b.collider.CollidesRect(b.Position.Add(pixel.V(lateralShift, 0)), wall).W()
 
 			if lateralSolidPush > lateralPush {
 				lateralPush = lateralSolidPush
@@ -37,7 +36,7 @@ func (b *Body) Move(velocity pixel.Vec, walls []*stage.Wall) {
 		verticalPush := float64(0)
 
 		for _, wall := range walls {
-			verticalSolidPush := b.collider.CollidesRect(b.Position.Add(pixel.V(0, verticalShift)), wall.CollisionArea()).H()
+			verticalSolidPush := b.collider.CollidesRect(b.Position.Add(pixel.V(0, verticalShift)), wall).H()
 
 			if verticalSolidPush > verticalPush {
 				verticalPush = verticalSolidPush

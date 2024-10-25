@@ -5,12 +5,7 @@ import (
 
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
-	"github.com/wirdos/actors"
-	"github.com/wirdos/directors/input"
 	"github.com/wirdos/directors/managers"
-	"github.com/wirdos/resources"
-	"github.com/wirdos/stage"
-	"github.com/wirdos/util"
 )
 
 func run() {
@@ -25,59 +20,14 @@ func run() {
 		panic(err)
 	}
 
-	pic, err := resources.LoadPNG("sprite")
+	game, err := managers.NewGame(window)
 
 	if err != nil {
 		panic(err)
 	}
-
-	sprite := pixel.NewSprite(pic, pic.Bounds())
-
-	pic, err = resources.LoadPNG("wall")
-
-	if err != nil {
-		panic(err)
-	}
-
-	wall := pixel.NewSprite(pic, pic.Bounds())
-
-	ipos := window.Bounds().Center()
-	window.SetMatrix(pixel.IM.Scaled(ipos, 4))
-
-	player := managers.NewPlayer()
-
-	input := input.NewKeyboardMouse(window)
-
-	walls := make([]*stage.Wall, 0)
-	walls = append(walls, stage.NewWall(pixel.R(ipos.X+32, ipos.Y-16, ipos.X+64, ipos.Y+48)))
-	walls = append(walls, stage.NewWall(pixel.R(ipos.X, ipos.Y+48, ipos.X+32, ipos.Y+80)))
-
-	character := actors.NewCharacter(ipos, 72, walls)
-
-	player.SetInput(input)
-	player.SetPuppet(character)
 
 	for !window.Closed() {
-		util.UpdateDeltaTime()
-
-		input.Update()
-
-		if player.RequestsExit() {
-			window.SetClosed(true)
-		}
-
-		window.Clear(pixel.RGB(1, 1, 1))
-
-		player.Update()
-		character.Update()
-
-		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 0))))
-		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(48, 32))))
-		wall.Draw(window, pixel.IM.Moved(ipos.Add(pixel.V(16, 64))))
-
-		sprite.Draw(window, pixel.IM.Moved(character.Pos()))
-
-		window.Update()
+		game.Update()
 	}
 }
 
