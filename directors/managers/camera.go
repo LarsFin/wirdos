@@ -1,6 +1,8 @@
 package managers
 
 import (
+	"sort"
+
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/util"
@@ -19,7 +21,11 @@ func (c *Camera) Render() {
 
 	c.window.Clear(pixel.RGB(1, 1, 1))
 
-	// TODO: determine ordering of faces to draw (e.g; layering and 'distance')
+	sort.Slice(c.faces, func(i, j int) bool {
+		// TODO: sort by y position too
+		return c.faces[i].Layer > c.faces[j].Layer
+	})
+
 	for _, face := range c.faces {
 		face.Draw(c.window)
 	}

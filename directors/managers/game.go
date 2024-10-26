@@ -68,10 +68,10 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	wallSprite := pixel.NewSprite(pic, pic.Bounds())
 
 	camera := NewCamera(window, center, 4, []*util.Face{
+		character.Face(),
 		util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y)),
 		util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y+32)),
 		util.NewFace(1, wallSprite, pixel.V(center.X+16, center.Y+64)),
-		character.Face(),
 	})
 
 	return &Game{
