@@ -5,7 +5,6 @@ import (
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
 	"github.com/wirdos/directors/input"
-	"github.com/wirdos/resources"
 	"github.com/wirdos/util"
 )
 
@@ -59,19 +58,19 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	player.SetPuppet(character)
 
 	// TODO: this should come from the map/stage
-	pic, err := resources.LoadPNG("wall")
+	// pic, err := resources.LoadPNG("wall")
 
-	if err != nil {
-		return nil, err
-	}
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	wallSprite := pixel.NewSprite(pic, pic.Bounds())
+	// wallSprite := pixel.NewSprite(pic, pic.Bounds())
 
 	camera := NewCamera(window, center, 4, []*util.Face{
 		character.Face(),
-		util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y)),
-		util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y+32)),
-		util.NewFace(1, wallSprite, pixel.V(center.X+16, center.Y+64)),
+		// util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y)),
+		// util.NewFace(1, wallSprite, pixel.V(center.X+48, center.Y+32)),
+		// util.NewFace(1, wallSprite, pixel.V(center.X+16, center.Y+64)),
 	})
 
 	return &Game{

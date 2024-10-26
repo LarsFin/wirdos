@@ -10,8 +10,9 @@ import (
 type Face struct {
 	Layer int8
 
-	// TODO: animation? probably need to provide picture and frame information
-	sprite *pixel.Sprite
+	spriteMap map[string]*pixel.Sprite
+	activeSpriteKey string
+
 	// TODO: obviously wrong to hold the position in two places if the body is the most relevant
 	// but let's explore for now
 	pos pixel.Vec
@@ -26,13 +27,18 @@ func (f *Face) Position() pixel.Vec {
 }
 
 func (f *Face) Draw(w *opengl.Window) {
-	f.sprite.Draw(w, pixel.IM.Moved(f.pos))
+	f.spriteMap[f.activeSpriteKey].Draw(w, pixel.IM.Moved(f.pos))
 }
 
-func NewFace(layer int8, sprite *pixel.Sprite, pos pixel.Vec) *Face {
+func (f *Face) SetSpriteKey(key string) {
+	f.activeSpriteKey = key
+}
+
+func NewFace(layer int8, spriteMap map[string]*pixel.Sprite, spriteKey string, pos pixel.Vec) *Face {
 	return &Face{
 		Layer: layer,
-		sprite: sprite,
+		spriteMap: spriteMap,
+		activeSpriteKey: spriteKey,
 		pos: pos,
 	}
 }
