@@ -1,0 +1,45 @@
+{
+    "name": "test",
+    "palette": "palette",
+    "spawnPoint": {
+        "x": 0,
+        "y": 0
+    },
+    "walls": [
+        {
+            "minX": 0,
+            "minY": 48,
+            "maxX": 32,
+            "maxY": 80
+        },
+        {
+            "minX": 32,
+            "minY": -16,
+            "maxX": 64,
+            "maxY": 48
+        }
+    ],
+    "tiles": [
+        {
+            "key": "wall",
+            "position": {
+                "x": 48,
+                "y": 0
+            }
+        },
+        {
+            "key": "wall",
+            "position": {
+                "x": 48,
+                "y": 32
+            }
+        },
+        {
+            "key": "wall",
+            "position": {
+                "x": 16,
+                "y": 64
+            }
+        }
+    ]
+}

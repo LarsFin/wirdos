@@ -2,7 +2,8 @@ package actors
 
 import (
 	"github.com/gopxl/pixel/v2"
-	"github.com/wirdos/resources"
+	"github.com/wirdos/resources/atlases"
+	"github.com/wirdos/structure"
 	"github.com/wirdos/util"
 )
 
@@ -11,15 +12,12 @@ type Character struct {
 	body  *util.Body
 	face *util.Face
 	velocity pixel.Vec
-
-	// TODO: this should be fed through Stage/Map on Update instead
-	walls []pixel.Rect
 }
 
-func (c *Character) Update() {
+func (c *Character) Update(stage *structure.Stage) {
 	if c.velocity.Len() > 0 {
 		c.face.SetSpriteKey(util.Direction(c.velocity))
-		c.body.Move(c.velocity, c.walls)
+		c.body.Move(c.velocity, stage.Walls)
 	}
 
 	c.face.Update(c.body.Position)
@@ -41,8 +39,8 @@ func (c *Character) Face() *util.Face {
 	return c.face
 }
 
-func NewCharacter(pos pixel.Vec, speed float64, walls []pixel.Rect) (*Character, error) {
-	spriteMap, err := resources.GenerateSpriteMap("character")
+func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {
+	spriteMap, err := atlases.GenerateSpriteMap("character")
 
 	if err != nil {
 		return nil, err
@@ -53,7 +51,5 @@ func NewCharacter(pos pixel.Vec, speed float64, walls []pixel.Rect) (*Character,
 		body:  util.NewBody(pos, pixel.R(-4, -8, 4, 0)),
 		face: util.NewFace(0, spriteMap, "right", pos),
 		velocity: pixel.ZV,
-		// TODO: feed via map/stage on update
-		walls: walls,
 	}, nil
 }

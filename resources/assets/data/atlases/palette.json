@@ -1,0 +1,14 @@
+{
+    "sheetName": "tilesheet",
+    "textures": [
+        {
+            "key": "wall",
+            "frame": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 32,
+                "maxY": 32
+            }
+        }
+    ] 
+}

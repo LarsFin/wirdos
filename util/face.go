@@ -2,7 +2,6 @@ package util
 
 import (
 	"github.com/gopxl/pixel/v2"
-	"github.com/gopxl/pixel/v2/backends/opengl"
 )
 
 // Face is the render information of a component within a scene
@@ -26,8 +25,8 @@ func (f *Face) Position() pixel.Vec {
 	return f.pos
 }
 
-func (f *Face) Draw(w *opengl.Window) {
-	f.spriteMap[f.activeSpriteKey].Draw(w, pixel.IM.Moved(f.pos))
+func (f *Face) Draw(t pixel.Target) {
+	f.spriteMap[f.activeSpriteKey].Draw(t, pixel.IM.Moved(f.pos))
 }
 
 func (f *Face) SetSpriteKey(key string) {
