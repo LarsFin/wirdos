@@ -14,7 +14,7 @@ type SpriteSheetData struct {
 
 type SpriteData struct {
 	Key string `json:"key"`
-	Frame Rect `json:"frame"`
+	Frame resources.Rect `json:"frame"`
 }
 
 func GenerateSpriteMap(path string) (map[string]*pixel.Sprite, error) {

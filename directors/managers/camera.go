@@ -1,41 +1,33 @@
 package managers
 
 import (
-	"sort"
-
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
-	"github.com/wirdos/util"
+	"github.com/wirdos/actors"
 )
 
 type Camera struct {
-	// TODO: faces should come through a stage/map
-	faces []*util.Face
+	stage *actors.Stage
 	pos pixel.Vec
 	zoom float64
 	window *opengl.Window
 }
 
 func (c *Camera) Render() {
-	c.window.SetMatrix(pixel.IM.Scaled(c.pos, c.zoom))
+	c.window.SetMatrix(pixel.IM.Moved(c.pos).Scaled(c.pos, c.zoom))
 
 	c.window.Clear(pixel.RGB(1, 1, 1))
 
-	sort.Slice(c.faces, func(i, j int) bool {
-		// TODO: sort by y position too
-		return c.faces[i].Layer > c.faces[j].Layer
-	})
-
-	for _, face := range c.faces {
-		face.Draw(c.window)
-	}
+	// TODO: layering through sorting + y position
+	c.stage.Board.Draw(c.window)
+	c.stage.Character.Face().Draw(c.window)
 
 	c.window.Update()
 }
 
-func NewCamera(window *opengl.Window, pos pixel.Vec, zoom float64, faces []*util.Face) *Camera {
+func NewCamera(window *opengl.Window, pos pixel.Vec, zoom float64, stage *actors.Stage) *Camera {
 	return &Camera{
-		faces: faces,
+		stage: stage,
 		pos: pos,
 		zoom: zoom,
 		window: window,

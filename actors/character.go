@@ -3,7 +3,6 @@ package actors
 import (
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/resources/atlases"
-	"github.com/wirdos/structure"
 	"github.com/wirdos/util"
 )
 
@@ -12,12 +11,13 @@ type Character struct {
 	body  *util.Body
 	face *util.Face
 	velocity pixel.Vec
+	stage *Stage
 }
 
-func (c *Character) Update(stage *structure.Stage) {
+func (c *Character) Update() {
 	if c.velocity.Len() > 0 {
 		c.face.SetSpriteKey(util.Direction(c.velocity))
-		c.body.Move(c.velocity, stage.Walls)
+		c.body.Move(c.velocity, c.stage.Walls)
 	}
 
 	c.face.Update(c.body.Position)
@@ -37,6 +37,11 @@ func (c *Character) Pos() pixel.Vec {
 
 func (c *Character) Face() *util.Face {
 	return c.face
+}
+
+func (c *Character) PlaceOnStage(stage *Stage) {
+	c.stage = stage
+	c.body.Position = stage.SpawnPoint()
 }
 
 func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {

@@ -4,7 +4,6 @@ import (
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
 	"github.com/wirdos/directors/input"
-	"github.com/wirdos/structure"
 	"github.com/wirdos/util"
 )
 
@@ -15,7 +14,7 @@ type Game struct {
 	input input.Input
 	character *actors.Character
 
-	stage *structure.Stage
+	stage *actors.Stage
 
 	window *opengl.Window
 }
@@ -35,7 +34,7 @@ func (g *Game) Update() {
 		return
 	}
 
-	g.character.Update(g.stage)
+	g.character.Update()
 
 	g.camera.Render()
 }
@@ -55,11 +54,15 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	player.SetInput(input)
 	player.SetPuppet(character)
 
-	stage := structure.LoadStage("test", character)
+	stage, err := actors.LoadStage("stage", character)
 
-	camera := NewCamera(window, center, 4, []*util.Face{
-		character.Face(),
-	})
+	if err != nil {
+		return nil, err
+	}
+
+	character.PlaceOnStage(stage)
+
+	camera := NewCamera(window, center, 4, stage)
 
 	return &Game{
 		player: player,
@@ -67,5 +70,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		input: input,
 		character: character,
 		window: window,
+		stage: stage,
 	}, nil
 }

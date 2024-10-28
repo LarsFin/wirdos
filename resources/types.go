@@ -1,4 +1,4 @@
-package atlases
+package resources
 
 import "github.com/gopxl/pixel/v2"
 
@@ -22,4 +22,27 @@ type Vec struct {
 
 func (v *Vec) ToPixelVec() pixel.Vec {
 	return pixel.V(v.X, v.Y)
+}
+
+type StageData struct {
+	PaletteName string `json:"palette"`
+	SpawnPoint Vec `json:"spawnPoint"`
+	Walls []Rect `json:"walls"`
+	Tiles []TileData `json:"tiles"`
+}
+
+type TileData struct {
+	Key string `json:"key"`
+	Position Vec `json:"position"`
+}
+
+
+type PaletteData struct {
+	ImgSrc string `json:"sheetName"`
+	Textures []TextureData `json:"textures"`
+}
+
+type TextureData struct {
+	Key string `json:"key"`
+	Frame Rect `json:"frame"`
 }
