@@ -25,9 +25,14 @@ func (v *Vec) ToPixelVec() pixel.Vec {
 }
 
 type StageData struct {
-	PaletteName string `json:"palette"`
 	SpawnPoint Vec `json:"spawnPoint"`
 	Walls []Rect `json:"walls"`
+	Boards []BoardData `json:"boards"`
+}
+
+type BoardData struct {
+	Layer int8 `json:"layer"`
+	PaletteName string `json:"palette"`
 	Tiles []TileData `json:"tiles"`
 }
 
@@ -35,7 +40,6 @@ type TileData struct {
 	Key string `json:"key"`
 	Position Vec `json:"position"`
 }
-
 
 type PaletteData struct {
 	ImgSrc string `json:"sheetName"`

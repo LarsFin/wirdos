@@ -19,7 +19,10 @@ func (c *Camera) Render() {
 	c.window.Clear(pixel.RGB(1, 1, 1))
 
 	// TODO: layering through sorting + y position
-	c.stage.Board.Draw(c.window)
+	for _, board := range c.stage.Boards {
+		board.Draw(c.window)
+	}
+
 	c.stage.Character.Face().Draw(c.window)
 
 	c.window.Update()

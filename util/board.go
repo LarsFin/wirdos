@@ -6,7 +6,7 @@ import (
 
 // different from a Face, a Board is a composite of static 'tiles' that make up
 // layers which never change in ordering, this allows for optimised rendering with
-// fewer draw calls
+// fewer draw calls using pixel's batch
 type Board struct {
 	Layer int8
 	batch *pixel.Batch

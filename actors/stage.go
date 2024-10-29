@@ -15,9 +15,7 @@ type Stage struct {
 	Walls []pixel.Rect
 	// TODO: should be a list of dynamic faces not just one
 	Character *Character
-	// TODO: could have multiple screens, i.e; foreground or parallax and
-	// so on (probably not the best name)
-	Board *util.Board
+	Boards []*util.Board
 	spawnPoint pixel.Vec
 }
 
@@ -38,19 +36,20 @@ func LoadStage(path string, character *Character) (*Stage, error) {
 		walls[i] = wall.ToPixelRect()
 	}
 
-	painter, err := util.NewPainter(stageData.PaletteName)
+	painter := util.NewPainter()
 
-	if err != nil {
-		return nil, err
+	boards := make([]*util.Board, len(stageData.Boards))
+	for i, boardData := range stageData.Boards {
+		boards[i], err = painter.PaintBoard(boardData)
+		if err != nil {
+			return nil, err
+		}
 	}
-
-	// TODO: work out screens against layers, maybe should just exist in data?
-	board := painter.PaintBoard(0, stageData.Tiles)
 
 	return &Stage{
 		Walls: walls,
 		Character: character,
-		Board: board,
+		Boards: boards,
 		spawnPoint: stageData.SpawnPoint.ToPixelVec(),
 	}, nil
 }

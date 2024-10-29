@@ -1,5 +1,4 @@
 {
-    "palette": "palette",
     "spawnPoint": {
         "x": 0,
         "y": 0
@@ -18,27 +17,33 @@
             "maxY": 48
         }
     ],
-    "tiles": [
+    "boards": [
         {
-            "key": "wall",
-            "position": {
-                "x": 48,
-                "y": 0
-            }
-        },
-        {
-            "key": "wall",
-            "position": {
-                "x": 48,
-                "y": 32
-            }
-        },
-        {
-            "key": "wall",
-            "position": {
-                "x": 16,
-                "y": 64
-            }
+            "layer": 0,
+            "palette": "palette",
+            "tiles": [
+                {
+                    "key": "wall",
+                    "position": {
+                        "x": 48,
+                        "y": 0
+                    }
+                },
+                {
+                    "key": "wall",
+                    "position": {
+                        "x": 48,
+                        "y": 32
+                    }
+                },
+                {
+                    "key": "wall",
+                    "position": {
+                        "x": 16,
+                        "y": 64
+                    }
+                }
+            ]
         }
     ]
 }
