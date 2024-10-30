@@ -13,6 +13,11 @@ type Camera struct {
 	window *opengl.Window
 }
 
+func (c *Camera) Update() {
+	// TODO: work out how to do this...
+	c.pos = pixel.IM.Project(c.stage.Character.Pos()).Sub(c.window.Bounds().Center())
+}
+
 func (c *Camera) Render() {
 	c.window.SetMatrix(pixel.IM.Moved(c.pos).Scaled(c.pos, c.zoom))
 

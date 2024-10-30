@@ -36,6 +36,8 @@ func (g *Game) Update() {
 
 	g.character.Update()
 
+	g.camera.Update()
+
 	g.camera.Render()
 }
 
