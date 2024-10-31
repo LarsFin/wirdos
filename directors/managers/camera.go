@@ -14,8 +14,7 @@ type Camera struct {
 }
 
 func (c *Camera) Update() {
-	// TODO: work out how to do this...
-	c.pos = pixel.IM.Project(c.stage.Character.Pos()).Sub(c.window.Bounds().Center())
+	c.pos = c.stage.Character.Pos().Scaled(-1 * c.zoom).Add(c.window.Bounds().Size().Scaled(0.5))
 }
 
 func (c *Camera) Render() {
