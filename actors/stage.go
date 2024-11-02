@@ -24,6 +24,19 @@ func (s *Stage) SpawnPoint() pixel.Vec {
 	return s.spawnPoint
 }
 
+// returns list of all drawable entities, note this list is unordered
+func (s *Stage) GetDrawables() []util.Drawable {
+	drawables := make([]util.Drawable, len(s.Boards)+1)
+
+	for i, board := range s.Boards {
+		drawables[i] = board
+	}
+
+	drawables[len(s.Boards)] = s.Character.Face()
+
+	return drawables
+}
+
 func LoadStage(path string, character *Character) (*Stage, error) {
 	stageData, err := resources.LoadJSON[resources.StageData](path)
 

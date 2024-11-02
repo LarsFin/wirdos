@@ -7,7 +7,7 @@ import (
 // Face is the render information of a component within a scene
 
 type Face struct {
-	Layer int8
+	layer int8
 
 	spriteMap map[string]*pixel.Sprite
 	activeSpriteKey string
@@ -33,9 +33,13 @@ func (f *Face) SetSpriteKey(key string) {
 	f.activeSpriteKey = key
 }
 
+func (f *Face) Layer() int8 {
+	return f.layer
+}
+
 func NewFace(layer int8, spriteMap map[string]*pixel.Sprite, spriteKey string, pos pixel.Vec) *Face {
 	return &Face{
-		Layer: layer,
+		layer: layer,
 		spriteMap: spriteMap,
 		activeSpriteKey: spriteKey,
 		pos: pos,

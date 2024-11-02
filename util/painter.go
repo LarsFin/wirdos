@@ -25,7 +25,7 @@ func (p *Painter) PaintBoard(boardData resources.BoardData) (*Board, error) {
 	}
 
 	return &Board{
-		Layer: boardData.Layer,
+		layer: boardData.Layer,
 		batch: batch,
 	}, nil
 }

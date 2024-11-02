@@ -1,6 +1,8 @@
 package managers
 
 import (
+	"sort"
+
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
@@ -32,7 +34,7 @@ func (c *Camera) Update() {
 		c.pos = c.pos.Add(over)
 	}
 
-	// need to recreate world view as the camera position has changed
+	// need to reload world view as the camera position has changed
 	worldView = c.worldView()
 	clamp := util.ContainmentTranslation(worldView, c.stage.Boundary)
 	c.pos = c.pos.Add(clamp)
@@ -47,12 +49,14 @@ func (c *Camera) Render() {
 
 	c.window.Clear(pixel.RGB(1, 1, 1))
 
-	// TODO: layering through sorting + y position
-	for _, board := range c.stage.Boards {
-		board.Draw(c.window)
-	}
+	drawables := c.stage.GetDrawables()
+	sort.Slice(drawables, func(i, j int) bool {
+		return drawables[i].(util.Drawable).Layer() > drawables[j].(util.Drawable).Layer()
+	})
 
-	c.stage.Character.Face().Draw(c.window)
+	for _, drawable := range drawables {
+		drawable.Draw(c.window)
+	}
 
 	c.window.Update()
 }
