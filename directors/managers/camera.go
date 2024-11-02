@@ -16,9 +16,10 @@ type Camera struct {
 func (c *Camera) Update() {
 	chp := c.stage.Character.Pos().Scaled(-c.zoom).Add(c.window.Bounds().Center())
 	delta := chp.Sub(c.pos)
+	limit := float64(64)
 
-	if delta.Len() > 128 {
-		over := delta.Sub(delta.Unit().Scaled(128))
+	if delta.Len() > limit {
+		over := delta.Sub(delta.Unit().Scaled(limit))
 		c.pos = c.pos.Add(over)
 	}
 }
