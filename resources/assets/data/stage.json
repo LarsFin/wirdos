@@ -17,6 +17,12 @@
             "maxY": 48
         }
     ],
+    "boundary": {
+        "minX": -240,
+        "minY": -160,
+        "maxX": 240,
+        "maxY": 160
+    },
     "boards": [
         {
             "layer": 0,

@@ -27,6 +27,7 @@ func (v *Vec) ToPixelVec() pixel.Vec {
 type StageData struct {
 	SpawnPoint Vec `json:"spawnPoint"`
 	Walls []Rect `json:"walls"`
+	Boundary Rect `json:"boundary"`
 	Boards []BoardData `json:"boards"`
 }
 

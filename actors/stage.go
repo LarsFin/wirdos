@@ -13,6 +13,7 @@ import (
 
 type Stage struct {
 	Walls []pixel.Rect
+	Boundary pixel.Rect
 	// TODO: should be a list of dynamic faces not just one
 	Character *Character
 	Boards []*util.Board
@@ -48,6 +49,7 @@ func LoadStage(path string, character *Character) (*Stage, error) {
 
 	return &Stage{
 		Walls: walls,
+		Boundary: stageData.Boundary.ToPixelRect(),
 		Character: character,
 		Boards: boards,
 		spawnPoint: stageData.SpawnPoint.ToPixelVec(),
