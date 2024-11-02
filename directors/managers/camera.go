@@ -4,6 +4,7 @@ import (
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
+	"github.com/wirdos/util"
 )
 
 type Camera struct {
@@ -24,14 +25,17 @@ func (c *Camera) Update() {
 	}
 
 	delta := c.stage.Character.Pos().Sub(c.pos)
-	limit := float64(8)
+	limit := 8.
 
 	if delta.Len() > limit {
 		over := delta.Sub(delta.Unit().Scaled(limit))
 		c.pos = c.pos.Add(over)
 	}
 
-	// TODO: if the view is outside stage boundary, it should be clamped within boundary instead
+	// need to recreate world view as the camera position has changed
+	worldView = c.worldView()
+	clamp := util.ContainmentTranslation(worldView, c.stage.Boundary)
+	c.pos = c.pos.Add(clamp)
 }
 
 func (c *Camera) Render() {
