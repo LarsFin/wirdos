@@ -6,7 +6,7 @@ import "github.com/gopxl/pixel/v2"
 // be larger than b for either or both dimensions the translation to anchor a
 // on b's center will be returned for the respective dimension. If a is already
 // within b, then a zero vector is returned as no translation is needed.
-func ContainmentTranslation(a pixel.Rect, b pixel.Rect) pixel.Vec {
+func ContainmentTranslation(a, b pixel.Rect) pixel.Vec {
 	x, y := .0, .0
 
 	if (a.W() > b.W()) {
