@@ -1,0 +1,14 @@
+{
+    "sheetName": "test",
+    "textures": [
+        {
+            "key": "rainbow",
+            "frame": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 16,
+                "maxY": 16
+            }
+        }
+    ] 
+}

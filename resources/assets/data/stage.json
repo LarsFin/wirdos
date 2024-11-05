@@ -23,10 +23,13 @@
         "maxX": 240,
         "maxY": 160
     },
+    "palettes": [
+        "palette",
+        "palette_2"
+    ],
     "boards": [
         {
             "layer": 0,
-            "palette": "palette",
             "tiles": [
                 {
                     "key": "wall",
@@ -47,6 +50,18 @@
                     "position": {
                         "x": 16,
                         "y": 64
+                    }
+                }
+            ]
+        },
+        {
+            "layer": 1,
+            "tiles": [
+                {
+                    "key": "rainbow",
+                    "position": {
+                        "x": 0,
+                        "y": 0
                     }
                 }
             ]

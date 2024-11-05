@@ -28,12 +28,12 @@ type StageData struct {
 	SpawnPoint Vec `json:"spawnPoint"`
 	Walls []Rect `json:"walls"`
 	Boundary Rect `json:"boundary"`
+	Palettes []string `json:"palettes"`
 	Boards []BoardData `json:"boards"`
 }
 
 type BoardData struct {
 	Layer int8 `json:"layer"`
-	PaletteName string `json:"palette"`
 	Tiles []TileData `json:"tiles"`
 }
 

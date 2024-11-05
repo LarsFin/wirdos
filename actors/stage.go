@@ -50,7 +50,11 @@ func LoadStage(path string, character *Character) (*Stage, error) {
 		walls[i] = wall.ToPixelRect()
 	}
 
-	painter := util.NewPainter()
+	painter, err := util.NewPainter(stageData.Palettes)
+
+	if err != nil {
+		return nil, err
+	}
 
 	boards := make([]*util.Board, len(stageData.Boards))
 	for i, boardData := range stageData.Boards {
