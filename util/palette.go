@@ -12,33 +12,43 @@ type Palette struct {
 	Textures map[string]*pixel.Sprite
 }
 
-// A palette is constructed from a slice of 'palette names', these point to pictures and have atlas information
-// on where certain textures are located in the picture. The palette merges these sourced pictures into one
-// picture and merges the atlas information into a map of textures. This allows for drawing sprites from different
-// texture files onto the same batch as they have the same picture in memory.
-// TODO: this could do with a refactor, its doing too much... also makes no sense for a new palette to receive
-// a list of palette names
-func NewPalette(paletteNames []string) (*Palette, error) {
-	paletteAtlases := make([]*resources.PaletteData, len(paletteNames))
-	pictures := make([]pixel.Picture, len(paletteNames))
-	areas := make([]*pixel.Rect, len(paletteNames))
+// A palette is a collection of textures with a key that determines the location of the texture within a picture.
+// This can be useful for straightforward static sprites that don't need to be animated.
+func NewPalette(paletteName string) (*Palette, error) {
+	paletteAtlas, err := resources.LoadJSON[resources.PaletteData](fmt.Sprintf("atlases/%s", paletteName))
+
+	if err != nil {
+		return nil, err
+	}
+
+	picture, err := resources.LoadPNG(paletteAtlas.ImgSrc)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data := pixel.PictureDataFromPicture(picture)
+	textures := make(map[string]*pixel.Sprite)
+
+	for _, texture := range paletteAtlas.Textures {
+		textures[texture.Key] = pixel.NewSprite(data, texture.Frame.ToPixelRect())
+	}
+
+	return &Palette{
+		Pic: data,
+		Textures: textures,
+	}, nil
+}
+
+// The pixel library can only draw sprites from the same picture onto a batch. This function takes a slice of palettes
+// which have different pictures, then combines them into one picture and creates a new map of textures with updated
+// frame information. This allows for optimised drawing of sprites from different texture files onto the same batch.
+func CombinePalettes(palettes []*Palette) (*Palette, error) {
+	areas := make([]*pixel.Rect, len(palettes))
 	dimensions := pixel.ZV
 
-	for i, paletteName := range paletteNames {
-		paletteAtlas, err := resources.LoadJSON[resources.PaletteData](fmt.Sprintf("atlases/%s", paletteName))
-
-		if err != nil {
-			return nil, err
-		}
-
-		paletteAtlases[i] = paletteAtlas
-		pictures[i], err = resources.LoadPNG(paletteAtlas.ImgSrc)
-
-		if err != nil {
-			return nil, err
-		}
-
-		picDimensions := pictures[i].Bounds().Size()
+	for i, palette := range palettes {
+		picDimensions := palette.Pic.Bounds().Size()
 		areas[i] = &pixel.Rect{
 			Min: pixel.V(dimensions.X, 0),
 			Max: pixel.V(dimensions.X + picDimensions.X, picDimensions.Y),
@@ -64,7 +74,7 @@ func NewPalette(paletteNames []string) (*Palette, error) {
 				point := pixel.V(float64(x), float64(y))
 				// can't use contains as it considers max edges as containing but this doesn't translate to pixel coordinates
 				if area.Min.X <= point.X && point.X < area.Max.X && area.Min.Y <= point.Y && point.Y < area.Max.Y {
-					pic := pixel.PictureDataFromPicture(pictures[i])
+					pic := pixel.PictureDataFromPicture(palettes[i].Pic)
 					data.Pix[data.Index(point)] = pic.Pix[pic.Index(point.Sub(area.Min))]
 				}
 			}
@@ -73,10 +83,13 @@ func NewPalette(paletteNames []string) (*Palette, error) {
 
 	textures := make(map[string]*pixel.Sprite)
 
-	for i, paletteAtlas := range paletteAtlases {
-		for _, texture := range paletteAtlas.Textures {
-			frame := texture.Frame.ToPixelRect()
-			textures[texture.Key] = pixel.NewSprite(data, frame.Moved(areas[i].Min))
+	for i, palette := range palettes {
+		for key, texture := range palette.Textures {
+			if _, ok := textures[key]; ok {
+				return nil, fmt.Errorf("duplicate texture key when combining palettes: %s", key)
+			}
+
+			textures[key] = pixel.NewSprite(data, texture.Frame().Moved(areas[i].Min))
 		}
 	}
 
