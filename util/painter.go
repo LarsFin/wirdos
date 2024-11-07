@@ -34,28 +34,22 @@ func NewPainter(paletteNames []string) (*Painter, error) {
 		return nil, fmt.Errorf("no palette names provided")
 	}
 
-	var palette *Palette
+	palettes := make([]*Palette, len(paletteNames))
 	var err error
 
-	if len(paletteNames) == 1 {
-		palette, err = NewPalette(paletteNames[0])
+	for i, paletteName := range paletteNames {
+		palettes[i], err = NewPalette(paletteName)
 
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	var palette *Palette
+
+	if len(palettes) == 1 {
+		palette = palettes[0]
 	} else {
-		palettes := make([]*Palette, len(paletteNames))
-
-		for i, paletteName := range paletteNames {
-			palette, err := NewPalette(paletteName)
-
-			if err != nil {
-				return nil, err
-			}
-
-			palettes[i] = palette
-		}
-
 		palette, err = CombinePalettes(palettes)
 
 		if err != nil {

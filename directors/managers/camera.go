@@ -51,7 +51,7 @@ func (c *Camera) Render() {
 
 	drawables := c.stage.GetDrawables()
 	sort.Slice(drawables, func(i, j int) bool {
-		return drawables[i].(util.Drawable).Layer() > drawables[j].(util.Drawable).Layer()
+		return drawables[i].Layer() > drawables[j].Layer()
 	})
 
 	for _, drawable := range drawables {
