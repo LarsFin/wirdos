@@ -16,6 +16,8 @@ func (p *Player) Update() {
 	// TODO: currently only one input type, but the idea is that the player
 	// knows how to decipher different input mechanisms to direct puppet
 	p.puppet.FeedDirection(p.input.Direction())
+	p.puppet.FeedInteract(p.input.Interact())
+
 	p.requestsExit = p.input.Exit()
 }
 
@@ -39,4 +41,5 @@ func NewPlayer() *Player {
 
 type PlayableActor interface {
 	FeedDirection(d pixel.Vec)
+	FeedInteract(interact bool)
 }

@@ -28,6 +28,7 @@ type StageData struct {
 	SpawnPoint Vec `json:"spawnPoint"`
 	Walls []Rect `json:"walls"`
 	Boundary Rect `json:"boundary"`
+	Props []StagePropData `json:"props"`
 	Palettes []string `json:"palettes"`
 	Boards []BoardData `json:"boards"`
 }
@@ -50,4 +51,13 @@ type PaletteData struct {
 type TextureData struct {
 	Key string `json:"key"`
 	Frame Rect `json:"frame"`
+}
+
+type PropData struct {
+	InteractiveDimensions Vec `json:"interactiveDimensions"`
+}
+
+type StagePropData struct {
+	Key string `json:"key"`
+	Position Vec `json:"position"`
 }

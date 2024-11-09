@@ -11,9 +11,6 @@ type Face struct {
 
 	spriteMap map[string]*pixel.Sprite
 	activeSpriteKey string
-
-	// TODO: obviously wrong to hold the position in two places if the body is the most relevant
-	// but let's explore for now
 	pos pixel.Vec
 }
 
@@ -37,6 +34,7 @@ func (f *Face) Layer() int8 {
 	return f.layer
 }
 
+// TODO: face should take a palette instead of the sprite map
 func NewFace(layer int8, spriteMap map[string]*pixel.Sprite, spriteKey string, pos pixel.Vec) *Face {
 	return &Face{
 		layer: layer,

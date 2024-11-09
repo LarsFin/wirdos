@@ -38,6 +38,11 @@ func (kbm *KeyboardMouse) Direction() pixel.Vec {
 	return kbm.direction
 }
 
+// TODO: buffer?
+func (kbm *KeyboardMouse) Interact() bool {
+	return kbm.window.JustPressed(pixel.KeyM)
+}
+
 func (kbm *KeyboardMouse) Exit() bool {
 	return kbm.exit
 }

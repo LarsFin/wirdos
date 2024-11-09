@@ -6,6 +6,8 @@ package actors
 // TODO: ponder whether this is the right place for the stage
 
 import (
+	"fmt"
+
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/resources"
 	"github.com/wirdos/util"
@@ -16,6 +18,7 @@ type Stage struct {
 	Boundary pixel.Rect
 	// TODO: should be a list of dynamic faces not just one
 	Character *Character
+	Props []*Prop
 	Boards []*util.Board
 	spawnPoint pixel.Vec
 }
@@ -38,10 +41,19 @@ func (s *Stage) GetDrawables() []util.Drawable {
 }
 
 func LoadStage(path string, character *Character) (*Stage, error) {
-	stageData, err := resources.LoadJSON[resources.StageData](path)
+	stageData, err := resources.LoadJSON[resources.StageData](fmt.Sprintf("stages/%s", path))
 
 	if err != nil {
 		return nil, err
+	}
+
+	props := make([]*Prop, len(stageData.Props))
+
+	for i, propData := range stageData.Props {
+		props[i], err = NewProp(propData.Key, propData.Position.ToPixelVec())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	walls := make([]pixel.Rect, len(stageData.Walls))
@@ -68,6 +80,7 @@ func LoadStage(path string, character *Character) (*Stage, error) {
 		Walls: walls,
 		Boundary: stageData.Boundary.ToPixelRect(),
 		Character: character,
+		Props: props,
 		Boards: boards,
 		spawnPoint: stageData.SpawnPoint.ToPixelVec(),
 	}, nil

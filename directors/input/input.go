@@ -8,5 +8,6 @@ type Input interface {
 	Update()
 
 	Direction() pixel.Vec
+	Interact() bool
 	Exit() bool
 }

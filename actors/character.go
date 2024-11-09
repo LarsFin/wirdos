@@ -1,6 +1,8 @@
 package actors
 
 import (
+	"fmt"
+
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/resources/atlases"
 	"github.com/wirdos/util"
@@ -11,11 +13,13 @@ type Character struct {
 	body  *util.Body
 	face *util.Face
 	velocity pixel.Vec
+	facingDirection pixel.Vec
 	stage *Stage
 }
 
 func (c *Character) Update() {
 	if c.velocity.Len() > 0 {
+		c.facingDirection = c.velocity.Unit()
 		c.face.SetSpriteKey(util.Direction(c.velocity))
 		c.body.Move(c.velocity, c.stage.Walls)
 	}
@@ -28,6 +32,17 @@ func (c *Character) FeedDirection(direction pixel.Vec) {
 		c.velocity = direction.Unit().Scaled(c.speed)
 	} else {
 		c.velocity = pixel.ZV
+	}
+}
+
+func (c *Character) FeedInteract(interact bool) {
+	if interact {
+		interactPoint := c.facingDirection.Scaled(16).Add(c.body.Position)
+		for _, prop := range c.stage.Props {
+			if prop.Interacting(interactPoint) {
+				fmt.Print("Interacting with prop.\n")
+			}
+		}
 	}
 }
 
@@ -45,6 +60,7 @@ func (c *Character) PlaceOnStage(stage *Stage) {
 }
 
 func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {
+	// TODO: sprite map isn't different to texture map, should update so a palette is used here
 	spriteMap, err := atlases.GenerateSpriteMap("character")
 
 	if err != nil {

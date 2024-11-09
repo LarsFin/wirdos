@@ -23,6 +23,15 @@
         "maxX": 240,
         "maxY": 160
     },
+    "props": [
+        {
+            "key": "demo",
+            "position": {
+                "x": 16,
+                "y": 64
+            }
+        }
+    ],
     "palettes": [
         "palette",
         "palette_2"
