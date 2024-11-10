@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gopxl/pixel/v2"
-	"github.com/wirdos/resources/atlases"
 	"github.com/wirdos/util"
 )
 
@@ -61,7 +60,7 @@ func (c *Character) PlaceOnStage(stage *Stage) {
 
 func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {
 	// TODO: sprite map isn't different to texture map, should update so a palette is used here
-	spriteMap, err := atlases.GenerateSpriteMap("character")
+	spriteMap, err := util.NewPalette("character")
 
 	if err != nil {
 		return nil, err

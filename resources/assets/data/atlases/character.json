@@ -1,6 +1,6 @@
 {
     "sheetName": "character",
-    "sprites": [
+    "textures": [
         {
             "key": "right",
             "frame": {
