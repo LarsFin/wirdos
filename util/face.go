@@ -9,7 +9,7 @@ import (
 type Face struct {
 	layer int8
 
-	spriteMap *Palette
+	palette *Palette
 	activeSpriteKey string
 	pos pixel.Vec
 }
@@ -23,7 +23,7 @@ func (f *Face) Position() pixel.Vec {
 }
 
 func (f *Face) Draw(t pixel.Target) {
-	f.spriteMap.Textures[f.activeSpriteKey].Draw(t, pixel.IM.Moved(f.pos))
+	f.palette.Textures[f.activeSpriteKey].Draw(t, pixel.IM.Moved(f.pos))
 }
 
 func (f *Face) SetSpriteKey(key string) {
@@ -34,11 +34,10 @@ func (f *Face) Layer() int8 {
 	return f.layer
 }
 
-// TODO: face should take a palette instead of the sprite map
-func NewFace(layer int8, spriteMap *Palette, spriteKey string, pos pixel.Vec) *Face {
+func NewFace(layer int8, palette *Palette, spriteKey string, pos pixel.Vec) *Face {
 	return &Face{
 		layer: layer,
-		spriteMap: spriteMap,
+		palette: palette,
 		activeSpriteKey: spriteKey,
 		pos: pos,
 	}

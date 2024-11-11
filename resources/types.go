@@ -54,7 +54,14 @@ type TextureData struct {
 }
 
 type PropData struct {
+	Layer int8 `json:"layer"`
+	Palette PropPaletteData `json:"palette"`
 	InteractiveDimensions Vec `json:"interactiveDimensions"`
+}
+
+type PropPaletteData struct {
+	Name string `json:"name"`
+	InitialKey string `json:"initialKey"`
 }
 
 type StagePropData struct {
