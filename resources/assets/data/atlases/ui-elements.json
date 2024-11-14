@@ -1,0 +1,14 @@
+{
+    "sheetName": "dialogue-box",
+    "textures": [
+        {
+            "key": "only",
+            "frame": {
+                "minX": 0,
+                "minY": 0,
+                "maxX": 1240,
+                "maxY": 240
+            }
+        }
+    ] 
+}

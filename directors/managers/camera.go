@@ -47,8 +47,6 @@ func (c *Camera) Render() {
 	mp := c.pos.Scaled(-c.zoom).Add(c.window.Bounds().Center())
 	c.window.SetMatrix(pixel.IM.Moved(mp).Scaled(mp, c.zoom))
 
-	c.window.Clear(pixel.RGB(1, 1, 1))
-
 	drawables := c.stage.GetDrawables()
 	sort.Slice(drawables, func(i, j int) bool {
 		return drawables[i].Layer() > drawables[j].Layer()
@@ -57,8 +55,6 @@ func (c *Camera) Render() {
 	for _, drawable := range drawables {
 		drawable.Draw(c.window)
 	}
-
-	c.window.Update()
 }
 
 func (c *Camera) worldView() pixel.Rect {

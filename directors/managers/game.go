@@ -1,9 +1,11 @@
 package managers
 
 import (
+	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
 	"github.com/wirdos/directors/input"
+	"github.com/wirdos/ui"
 	"github.com/wirdos/util"
 )
 
@@ -15,6 +17,8 @@ type Game struct {
 	character *actors.Character
 
 	stage *actors.Stage
+
+	ui *ui.UI
 
 	window *opengl.Window
 }
@@ -38,7 +42,13 @@ func (g *Game) Update() {
 
 	g.camera.Update()
 
+	// TODO: workout render pipeline flow here, or at least improve structuring
+	g.window.Clear(pixel.RGB(1, 1, 1))
+
 	g.camera.Render()
+	g.ui.Render()
+
+	g.window.Update()
 }
 
 func NewGame(window *opengl.Window) (*Game, error) {
@@ -65,6 +75,11 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	character.PlaceOnStage(stage)
 
 	camera := NewCamera(window, center, 4, stage)
+	ui, err := ui.NewUI(window)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &Game{
 		player: player,
@@ -72,6 +87,7 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		input: input,
 		character: character,
 		window: window,
+		ui: ui,
 		stage: stage,
 	}, nil
 }
