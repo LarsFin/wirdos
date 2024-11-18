@@ -23,13 +23,22 @@ func (tb *DialogueBox) Draw(t pixel.Target) {
 	tb.textBox.Draw(t, pixel.IM)
 }
 
+func textAreaBox(dialogueArea pixel.Rect) pixel.Rect {
+	return pixel.R(
+		dialogueArea.Min.X + 32,
+		dialogueArea.Min.Y + 32,
+		dialogueArea.Max.X + 32,
+		dialogueArea.Max.Y - 64,
+	)
+}
+
 func NewDialogueBox(palette *util.Palette) *DialogueBox {
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	text := text.New(pixel.V(64, 172), atlas)
 	text.Color = pixel.RGB(1, 1, 1)
 
 	face := util.NewFace(0, palette, "only", palette.Pic.Bounds().Center())
-	textBox := util.NewTextBox(palette.Pic.Bounds())
+	textBox := util.NewTextBox(textAreaBox(palette.Pic.Bounds()), 2., 1.5)
 
 	return &DialogueBox{
 		textBox: textBox,

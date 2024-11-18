@@ -13,16 +13,17 @@ import (
 type TextBox struct {
 	writer *text.Text
 	bounds pixel.Rect
+	scale float64
 }
 
 func (tb *TextBox) Draw(t pixel.Target, matrix pixel.Matrix) {
-	tb.writer.Draw(t, matrix)
+	tb.writer.Draw(t, matrix.Scaled(tb.writer.Orig, tb.scale))
 }
 
 func (tb *TextBox) SetText(s string) {
 	words := strings.SplitAfter(s, " ")
 	for _, word := range words {
-		if tb.writer.BoundsOf(word).Max.X > tb.bounds.W() {
+		if tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W() {
 			tb.writer.WriteRune('\n')
 		}
 
@@ -30,7 +31,7 @@ func (tb *TextBox) SetText(s string) {
 	}
 }
 
-func NewTextBox(box pixel.Rect) (*TextBox) {
+func NewTextBox(box pixel.Rect, textScale float64, lineHeightScale float64) (*TextBox) {
 	// TODO: this should be encapsulated in a separate util file, possibly
 	// this should be bundled together in a sub package.
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
@@ -41,9 +42,11 @@ func NewTextBox(box pixel.Rect) (*TextBox) {
 	)
 
 	writer.Color = pixel.RGB(1, 1, 1)
+	writer.LineHeight *= lineHeightScale
 
 	return &TextBox{
 		writer: writer,
 		bounds: box,
+		scale: textScale,
 	}
 }
