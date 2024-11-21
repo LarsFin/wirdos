@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"math"
 	"strings"
 	"unicode"
@@ -28,6 +29,7 @@ type TextAnimation struct {
 	// newlines from box formatting are not included
 	charactersWritten uint
 	timeSinceLastWrite float64
+	cancelled bool
 }
 
 type TextBoxOptions struct {
@@ -48,8 +50,8 @@ func (tb *TextBox) Update() {
 		return
 	}
 
-	// if the animation has been processed, return
-	if tb.textAnimation.charactersWritten >= uint(len(tb.text)) {
+	// if the animation has been processed or cancelled, return
+	if tb.textAnimation.cancelled || tb.textAnimation.charactersWritten >= uint(len(tb.text)) {
 		return
 	}
 
@@ -71,20 +73,35 @@ func (tb *TextBox) Update() {
 	for tb.textAnimation.charactersWritten < byFrameCharactersWritten {
 		i := tb.textAnimation.charactersWritten
 
-		// if this is the first character to a word, check word requires newline
-		if i == 0 || !unicode.IsSpace(rune(tb.text[i])) && unicode.IsSpace(rune(tb.text[i -1])) {
-			word := string(tb.text[i])
-			for wli := i; wli < toWriteThisFrame && unicode.IsSpace(rune(tb.text[wli])); wli++ {
-				word += string(tb.text[wli])
+		newLine := i == 0 || tb.text[i - 1] == '\n'
+		newWord := newLine || !unicode.IsSpace(rune(tb.text[i]))
+
+		// if it's a new word and it's length would extend beyond container, check whether a newline
+		// is necessary or stopping animation when word is on newline so could never fit
+		if newWord && tb.peekWord(i) {
+			if newLine {
+				// TODO: use logger
+				fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+				tb.textAnimation.cancelled = true
+				return
 			}
-			if tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W() {
-				tb.writer.WriteRune('\n')
-			}
+
+			tb.writer.WriteRune('\n')
 		}
 
 		tb.writer.WriteByte(tb.text[i])
 		tb.textAnimation.charactersWritten++
 	}
+}
+
+// determines whether word from index is potentially written is beyond container
+func (tb *TextBox) peekWord(i uint) bool {
+	word := ""
+	for uint(len(tb.text)) > i && !unicode.IsSpace(rune(tb.text[i])) {
+		word += string(tb.text[i])
+		i++
+	}
+	return tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W()
 }
 
 func (tb *TextBox) writeAll() {
@@ -148,6 +165,7 @@ func NewTextBox(options TextBoxOptions) (*TextBox) {
 	if options.TextAnimationOptions != nil {
 		textAnimation = &TextAnimation{
 			speed: options.TextAnimationOptions.Speed,
+			cancelled: false,
 		}
 	}
 
