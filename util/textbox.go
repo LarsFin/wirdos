@@ -71,12 +71,17 @@ func (tb *TextBox) Update() {
 	err := tb.writeText(tb.textAnimation.charactersWritten, byFrameCharactersWritten)
 
 	if err != nil {
+		// TODO: use logger here probably
 		fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
 		tb.textAnimation.cancelled = true
 		return
 	}
 
 	tb.textAnimation.charactersWritten = byFrameCharactersWritten
+}
+
+func (tb *TextBox) outOfBounds(s string) bool {
+	return tb.writer.BoundsOf(s).Max.X * tb.scale > tb.bounds.W()
 }
 
 // determines whether word from index is potentially written is beyond container
@@ -86,16 +91,21 @@ func (tb *TextBox) peekWord(i uint) bool {
 		word += string(tb.text[i])
 		i++
 	}
-	return tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W()
+	return tb.outOfBounds(word)
 }
 
 // write text between 'from' and 'to', including 'from' but excluding 'to'.
 func (tb *TextBox) writeText(from uint, to uint) error {
 	for i := from; i < to; i++ {
+		isSpace := unicode.IsSpace(rune(tb.text[i]))
 		newLine := i == 0 || tb.text[i - 1] == '\n'
-		newWord := !unicode.IsSpace(rune(tb.text[i])) && newLine || unicode.IsSpace(rune(tb.text[i - 1]))
+		newWord := !isSpace && newLine || unicode.IsSpace(rune(tb.text[i - 1]))
 		
-		if newWord && tb.peekWord(i) {
+		if isSpace && tb.outOfBounds(string(tb.text[i])) {
+			// if the character is whitespace that would put the text out of bounds on the horizontal
+			// of the textbox; skip character as it's not valuable to write
+			continue
+		} else if newWord && tb.peekWord(i) {
 			// if it's a new line and the word doesn't fit the container in width, this means the text
 			// can never be rendered *currently*, potentially it could return a scalar reduction required
 			// to fit the text in width of the container.
@@ -106,8 +116,6 @@ func (tb *TextBox) writeText(from uint, to uint) error {
 			tb.writer.WriteRune('\n')
 		}
 
-		// TODO: consider whitespace, if it were to extend beyond container 'peekWord' would always return true
-		// despite the word itself not extending over the container width
 		tb.writer.WriteByte(tb.text[i])
 	}
 
@@ -127,7 +135,11 @@ func (tb *TextBox) SetText(s string) {
 		tb.textAnimation.charactersWritten = 0
 		tb.textAnimation.timeSinceLastWrite = 0
 	} else {
-		tb.writeText(0, uint(len(s)))
+		err := tb.writeText(0, uint(len(s)))
+		if err != nil {
+			// TODO: consider logger, also refactor how this is logged
+			fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+		}
 	}
 }
 
