@@ -10,13 +10,17 @@ import (
 // based on the camera's matrix, it should be simply directly rendered to the
 // view based on fixed coordinates
 type UI struct {
-	textbox *DialogueBox
+	dialogueBox *DialogueBox
 	window *opengl.Window
+}
+
+func (ui *UI) Update() {
+	ui.dialogueBox.Update()
 }
 
 func (ui *UI) Render() {
 	ui.window.SetMatrix(pixel.IM)
-	ui.textbox.Draw(ui.window)
+	ui.dialogueBox.Draw(ui.window)
 }
 
 func NewUI(window *opengl.Window) (*UI, error) {
@@ -26,13 +30,13 @@ func NewUI(window *opengl.Window) (*UI, error) {
 		return nil, err
 	}
 
-	textBox := NewDialogueBox(palette)
-	textBox.WriteText(
+	dialogueBox := NewDialogueBox(palette)
+	dialogueBox.WriteText(
 		"This is a very long piece of text which is printed on multiple lines by code and not designed with newlines as part of design... at least I hope so, it's designed so to split on word but there is a question of the text size which possibly overlaps no?",
 	)
 
 	return &UI{
-		textbox: textBox,
+		dialogueBox: dialogueBox,
 		window: window,
 	}, nil
 }

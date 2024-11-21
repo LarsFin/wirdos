@@ -41,6 +41,7 @@ func (g *Game) Update() {
 	g.character.Update()
 
 	g.camera.Update()
+	g.ui.Update()
 
 	// TODO: workout render pipeline flow here, or at least improve structuring
 	g.window.Clear(pixel.RGB(1, 1, 1))

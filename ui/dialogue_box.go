@@ -14,6 +14,10 @@ type DialogueBox struct {
 	boxFace *util.Face
 }
 
+func (tb *DialogueBox) Update() {
+	tb.textBox.Update()
+}
+
 func (tb *DialogueBox) WriteText(text string) {
 	tb.textBox.SetText(text)
 }
@@ -38,7 +42,14 @@ func NewDialogueBox(palette *util.Palette) *DialogueBox {
 	text.Color = pixel.RGB(1, 1, 1)
 
 	face := util.NewFace(0, palette, "only", palette.Pic.Bounds().Center())
-	textBox := util.NewTextBox(textAreaBox(palette.Pic.Bounds()), 2., 1.5)
+	textBox := util.NewTextBox(util.TextBoxOptions{
+		Bounds: textAreaBox(palette.Pic.Bounds()),
+		TextScale: 2.,				
+		LineHeightScale: 1.5,
+		TextAnimationOptions: &util.TextAnimationOptions{
+			Speed: 60,
+		},
+	})
 
 	return &DialogueBox{
 		textBox: textBox,
