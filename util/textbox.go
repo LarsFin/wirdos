@@ -3,7 +3,6 @@ package util
 import (
 	"fmt"
 	"math"
-	"strings"
 	"unicode"
 
 	"github.com/gopxl/pixel/v2"
@@ -69,29 +68,15 @@ func (tb *TextBox) Update() {
 	))
 	tb.textAnimation.timeSinceLastWrite = math.Mod(tb.textAnimation.timeSinceLastWrite, tick)
 
-	// TODO: what if a word is too long to fit on a line even on its own? This will be an infinite loop...
-	for tb.textAnimation.charactersWritten < byFrameCharactersWritten {
-		i := tb.textAnimation.charactersWritten
+	err := tb.writeText(tb.textAnimation.charactersWritten, byFrameCharactersWritten)
 
-		newLine := i == 0 || tb.text[i - 1] == '\n'
-		newWord := newLine || !unicode.IsSpace(rune(tb.text[i]))
-
-		// if it's a new word and it's length would extend beyond container, check whether a newline
-		// is necessary or stopping animation when word is on newline so could never fit
-		if newWord && tb.peekWord(i) {
-			if newLine {
-				// TODO: use logger
-				fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
-				tb.textAnimation.cancelled = true
-				return
-			}
-
-			tb.writer.WriteRune('\n')
-		}
-
-		tb.writer.WriteByte(tb.text[i])
-		tb.textAnimation.charactersWritten++
+	if err != nil {
+		fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+		tb.textAnimation.cancelled = true
+		return
 	}
+
+	tb.textAnimation.charactersWritten = byFrameCharactersWritten
 }
 
 // determines whether word from index is potentially written is beyond container
@@ -104,19 +89,29 @@ func (tb *TextBox) peekWord(i uint) bool {
 	return tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W()
 }
 
-func (tb *TextBox) writeAll() {
-	// TODO: each word here is only split by a space, this should work against newline characters too...
-	for i, word := range strings.Split(tb.text, " ") {
-		if i > 0 {
-			tb.writer.WriteRune(' ')
-		}
+// write text between 'from' and 'to', including 'from' but excluding 'to'.
+func (tb *TextBox) writeText(from uint, to uint) error {
+	for i := from; i < to; i++ {
+		newLine := i == 0 || tb.text[i - 1] == '\n'
+		newWord := !unicode.IsSpace(rune(tb.text[i])) && newLine || unicode.IsSpace(rune(tb.text[i - 1]))
+		
+		if newWord && tb.peekWord(i) {
+			// if it's a new line and the word doesn't fit the container in width, this means the text
+			// can never be rendered *currently*, potentially it could return a scalar reduction required
+			// to fit the text in width of the container.
+			if newLine {
+				return fmt.Errorf("failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+			}
 
-		if tb.writer.BoundsOf(word).Max.X * tb.scale > tb.bounds.W() {
 			tb.writer.WriteRune('\n')
 		}
 
-		tb.writer.WriteString(word)
+		// TODO: consider whitespace, if it were to extend beyond container 'peekWord' would always return true
+		// despite the word itself not extending over the container width
+		tb.writer.WriteByte(tb.text[i])
 	}
+
+	return nil
 }
 
 func (tb *TextBox) Draw(t pixel.Target, matrix pixel.Matrix) {
@@ -132,7 +127,7 @@ func (tb *TextBox) SetText(s string) {
 		tb.textAnimation.charactersWritten = 0
 		tb.textAnimation.timeSinceLastWrite = 0
 	} else {
-		tb.writeAll()
+		tb.writeText(0, uint(len(s)))
 	}
 }
 
