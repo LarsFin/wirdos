@@ -13,7 +13,7 @@ type Game struct {
 	player *Player
 	camera *Camera
 
-	input input.Input
+	input input.InputController
 	character *actors.Character
 
 	stage *actors.Stage

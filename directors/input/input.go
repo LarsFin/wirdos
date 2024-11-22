@@ -4,10 +4,13 @@ import (
 	"github.com/gopxl/pixel/v2"
 )
 
-type Input interface {
+type InputController interface {
 	Update()
+	Input() *Input
+}
 
-	Direction() pixel.Vec
-	Interact() bool
-	Exit() bool
+type Input struct {
+	Direction pixel.Vec
+	Interact bool
+	Exit bool
 }

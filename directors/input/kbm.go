@@ -7,44 +7,50 @@ import (
 
 type KeyboardMouse struct {
 	window *opengl.Window
-	
-	direction pixel.Vec
-	exit bool
+	input *Input
 }
 
 func (kbm *KeyboardMouse) Update() {
-	kbm.direction = pixel.ZV
+	kbm.input = &Input{
+		Interact: kbm.interact(),
+		Direction: kbm.direction(),
+		Exit: kbm.exit(),
+	}
+}
+
+func (kbm *KeyboardMouse) Input() *Input {
+	return kbm.input
+}
+
+func (kbm *KeyboardMouse) direction() pixel.Vec {
+	direction := pixel.ZV
 
 	if kbm.window.Pressed(pixel.KeyA) {
-		kbm.direction.X--
+		direction.X--
 	}
 
 	if kbm.window.Pressed(pixel.KeyD) {
-		kbm.direction.X++
+		direction.X++
 	}
 
 	if kbm.window.Pressed(pixel.KeyW) {
-		kbm.direction.Y++
+		direction.Y++
 	}
 
 	if kbm.window.Pressed(pixel.KeyS) {
-		kbm.direction.Y--
+		direction.Y--
 	}
 
-	kbm.exit = kbm.window.JustPressed(pixel.KeyEscape)
-}
-
-func (kbm *KeyboardMouse) Direction() pixel.Vec {
-	return kbm.direction
+	return direction
 }
 
 // TODO: buffer?
-func (kbm *KeyboardMouse) Interact() bool {
+func (kbm *KeyboardMouse) interact() bool {
 	return kbm.window.JustPressed(pixel.KeyM)
 }
 
-func (kbm *KeyboardMouse) Exit() bool {
-	return kbm.exit
+func (kbm *KeyboardMouse) exit() bool {
+	return kbm.window.JustPressed(pixel.KeyEscape)
 }
 
 func NewKeyboardMouse(window *opengl.Window) *KeyboardMouse {

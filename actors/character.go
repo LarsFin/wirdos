@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gopxl/pixel/v2"
+	"github.com/wirdos/directors/input"
 	"github.com/wirdos/util"
 )
 
@@ -26,7 +27,12 @@ func (c *Character) Update() {
 	c.face.Update(c.body.Position)
 }
 
-func (c *Character) FeedDirection(direction pixel.Vec) {
+func (c *Character) FeedInput(input *input.Input) {
+	c.processDirection(input.Direction)
+	c.processInteract(input.Interact)
+}
+
+func (c *Character) processDirection(direction pixel.Vec) {
 	if direction.Len() > 0 {
 		c.velocity = direction.Unit().Scaled(c.speed)
 	} else {
@@ -34,7 +40,7 @@ func (c *Character) FeedDirection(direction pixel.Vec) {
 	}
 }
 
-func (c *Character) FeedInteract(interact bool) {
+func (c *Character) processInteract(interact bool) {
 	if interact {
 		interactPoint := c.facingDirection.Scaled(16).Add(c.body.Position)
 		for _, prop := range c.stage.Props {
