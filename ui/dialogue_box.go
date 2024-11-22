@@ -2,9 +2,7 @@ package ui
 
 import (
 	"github.com/gopxl/pixel/v2"
-	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/wirdos/util"
-	"golang.org/x/image/font/basicfont"
 )
 
 // TODO: this should really be DialogueBox, then a separate definition could exist
@@ -36,14 +34,11 @@ func textAreaBox(dialogueArea pixel.Rect) pixel.Rect {
 	)
 }
 
-func NewDialogueBox(palette *util.Palette) *DialogueBox {
-	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
-	text := text.New(pixel.V(64, 172), atlas)
-	text.Color = pixel.RGB(1, 1, 1)
-
-	face := util.NewFace(0, palette, "only", palette.Pic.Bounds().Center())
+func NewDialogueBox(theme *Theme) *DialogueBox {
+	face := util.NewFace(0, theme.Palette, "only", theme.Palette.Pic.Bounds().Center())
 	textBox := util.NewTextBox(util.TextBoxOptions{
-		Bounds: textAreaBox(palette.Pic.Bounds()),
+		Bounds: textAreaBox(theme.Palette.Pic.Bounds()),
+		TextAtlas: theme.TextAtlas,
 		TextScale: 2.,				
 		LineHeightScale: 1.5,
 		TextAnimationOptions: &util.TextAnimationOptions{

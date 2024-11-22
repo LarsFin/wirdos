@@ -7,7 +7,6 @@ import (
 
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/ext/text"
-	"golang.org/x/image/font/basicfont"
 )
 
 // A helper for styling and formatting text given a defined container, for
@@ -33,6 +32,7 @@ type TextAnimation struct {
 
 type TextBoxOptions struct {
 	Bounds pixel.Rect
+	TextAtlas *text.Atlas
 	TextScale float64
 	LineHeightScale float64
 	TextAnimationOptions *TextAnimationOptions
@@ -144,9 +144,7 @@ func (tb *TextBox) SetText(s string) {
 }
 
 func NewTextBox(options TextBoxOptions) (*TextBox) {
-	// TODO: this should be encapsulated in a separate util file, possibly
-	// this should be bundled together in a sub package.
-	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	atlas := options.TextAtlas
 
 	var textScale float64 = 1
 	if options.TextScale > 0 {
