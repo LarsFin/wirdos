@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"slices"
+
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/gopxl/pixel/v2/ext/text"
@@ -12,15 +14,22 @@ import (
 // based on the camera's matrix, it should be simply directly rendered to the
 // view based on fixed coordinates
 type UI struct {
-	dialogueBox *DialogueBox
+	components []UIComponent
 	window *opengl.Window
 
 	theme *Theme
 }
 
 func (ui *UI) Update() {
-	if ui.dialogueBox != nil {
-		ui.dialogueBox.Update()
+	i := 0
+	for i < len(ui.components) {
+		if ui.components[i].IsDestroyed() {
+			ui.components = slices.Delete(ui.components, i, i+1)
+			continue
+		}
+
+		ui.components[i].Update()
+		i++
 	}
 }
 
@@ -32,20 +41,13 @@ func (ui *UI) Render() {
 	// to commonly write text. The problem there is that the text can't be written to
 	// the batch as it's not the same picture, if it's not part of the same batch it's
 	// likely there could be layering issues
-	if ui.dialogueBox != nil {
-		ui.dialogueBox.Draw(ui.window)
+	for _, component := range ui.components {
+		component.Draw(ui.window)
 	}
 }
 
-// TODO: obviously should be more abstract than this, should have a map of drawable
-// components which are drawable
-func (ui *UI) AddDialogueBox(db *DialogueBox) {
-	ui.dialogueBox = db
-}
-
-// TODO: see above TODO
-func (ui *UI) DeleteDialogueBox() {
-	ui.dialogueBox = nil
+func (ui *UI) AddComponent(c UIComponent) {
+	ui.components = append(ui.components, c)
 }
 
 // TODO: theme is probably the wrong word right now but I like the idea of choosing
@@ -62,11 +64,20 @@ func NewUI(window *opengl.Window) (*UI, error) {
 		return nil, err
 	}
 
+	components := make([]UIComponent, 0)
+
 	return &UI{
 		window: window,
 		theme: &Theme{
 			Palette: palette,
 			TextAtlas: atlas,
 		},
+		components: components,
 	}, nil
+}
+
+type UIComponent interface {
+	Update()
+	Draw(pixel.Target)
+	IsDestroyed() bool
 }

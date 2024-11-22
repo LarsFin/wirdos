@@ -10,6 +10,7 @@ import (
 type DialogueBox struct {
 	textBox *util.TextBox
 	boxFace *util.Face
+	isDestroyed bool
 }
 
 func (tb *DialogueBox) Update() {
@@ -23,6 +24,14 @@ func (tb *DialogueBox) WriteText(text string) {
 func (tb *DialogueBox) Draw(t pixel.Target) {
 	tb.boxFace.Draw(t)
 	tb.textBox.Draw(t, pixel.IM)
+}
+
+func (tb *DialogueBox) Destroy() {
+	tb.isDestroyed = true
+}
+
+func (tb *DialogueBox) IsDestroyed() bool {
+	return tb.isDestroyed
 }
 
 func textAreaBox(dialogueArea pixel.Rect) pixel.Rect {
@@ -49,5 +58,6 @@ func NewDialogueBox(theme *Theme) *DialogueBox {
 	return &DialogueBox{
 		textBox: textBox,
 		boxFace: face,
+		isDestroyed: false,
 	}
 }

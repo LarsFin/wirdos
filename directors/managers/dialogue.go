@@ -14,8 +14,8 @@ type Dialogue struct {
 func (d *Dialogue) FeedInput(input *input.Input) {
 	if input.Interact {
 		if d.dialogueBox != nil {
+			d.dialogueBox.Destroy()
 			d.dialogueBox = nil
-			d.ui.DeleteDialogueBox()
 		} else {
 			d.BeginScript()
 		}
@@ -30,7 +30,7 @@ func (d *Dialogue) BeginScript() {
 	)
 
 	d.dialogueBox = dialogueBox
-	d.ui.AddDialogueBox(dialogueBox)
+	d.ui.AddComponent(dialogueBox)
 }
 
 func NewDialogue(ui *ui.UI) *Dialogue {
