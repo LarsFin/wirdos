@@ -20,6 +20,8 @@ type Game struct {
 
 	ui *ui.UI
 
+	dialogue *Dialogue
+
 	window *opengl.Window
 }
 
@@ -82,6 +84,13 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		return nil, err
 	}
 
+	// TODO: this really makes me feel like dialogue shouldn't be a manager but I can't
+	// quite work out why or what it should be instead...
+	dialogue := NewDialogue(ui)
+
+	// TODO: purely for testing...
+	player.SetPuppet(dialogue)
+
 	return &Game{
 		player: player,
 		camera: camera,
@@ -90,5 +99,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		window: window,
 		ui: ui,
 		stage: stage,
+		dialogue: dialogue,
 	}, nil
 }
