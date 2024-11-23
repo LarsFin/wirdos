@@ -14,8 +14,12 @@ type Dialogue struct {
 func (d *Dialogue) FeedInput(input *input.Input) {
 	if input.Interact {
 		if d.dialogueBox != nil {
-			d.dialogueBox.Destroy()
-			d.dialogueBox = nil
+			if d.dialogueBox.CurrentlyAnimating() {
+				d.dialogueBox.SkipTextAnimation()
+			} else {
+				d.dialogueBox.Destroy()
+				d.dialogueBox = nil
+			}
 		} else {
 			d.BeginScript()
 		}

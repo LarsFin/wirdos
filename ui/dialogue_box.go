@@ -34,6 +34,14 @@ func (tb *DialogueBox) IsDestroyed() bool {
 	return tb.isDestroyed
 }
 
+func (tb *DialogueBox) SkipTextAnimation() {
+	tb.textBox.SkipAnimation()
+}
+
+func (tb *DialogueBox) CurrentlyAnimating() bool {
+	return tb.textBox.InAnimation()
+}
+
 func textAreaBox(dialogueArea pixel.Rect) pixel.Rect {
 	return pixel.R(
 		dialogueArea.Min.X + 32,

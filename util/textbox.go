@@ -27,6 +27,7 @@ type TextAnimation struct {
 	// newlines from box formatting are not included
 	charactersWritten uint
 	timeSinceLastWrite float64
+	skip bool
 	cancelled bool
 }
 
@@ -44,13 +45,7 @@ type TextAnimationOptions struct {
 }
 
 func (tb *TextBox) Update() {
-	// should no animation have been provided; return as there's nothing to update
-	if tb.textAnimation == nil {
-		return
-	}
-
-	// if the animation has been processed or cancelled, return
-	if tb.textAnimation.cancelled || tb.textAnimation.charactersWritten >= uint(len(tb.text)) {
+	if !tb.InAnimation() {
 		return
 	}
 
@@ -61,11 +56,18 @@ func (tb *TextBox) Update() {
 		return
 	}
 
-	toWriteThisFrame := uint(math.Floor(tb.textAnimation.timeSinceLastWrite / tick))
-	byFrameCharactersWritten := uint(math.Min(
-		float64(tb.textAnimation.charactersWritten + toWriteThisFrame),
-		float64(len(tb.text)),
-	))
+	var byFrameCharactersWritten uint
+
+	if tb.textAnimation.skip {
+		byFrameCharactersWritten = uint(len(tb.text))
+	} else {
+		toWriteThisFrame := uint(math.Floor(tb.textAnimation.timeSinceLastWrite / tick))
+		byFrameCharactersWritten = uint(math.Min(
+			float64(tb.textAnimation.charactersWritten + toWriteThisFrame),
+			float64(len(tb.text)),
+		))
+	}
+
 	tb.textAnimation.timeSinceLastWrite = math.Mod(tb.textAnimation.timeSinceLastWrite, tick)
 
 	err := tb.writeText(tb.textAnimation.charactersWritten, byFrameCharactersWritten)
@@ -95,7 +97,7 @@ func (tb *TextBox) peekWord(i uint) bool {
 }
 
 // write text between 'from' and 'to', including 'from' but excluding 'to'.
-func (tb *TextBox) writeText(from uint, to uint) error {
+func (tb *TextBox) writeText(from, to uint) error {
 	for i := from; i < to; i++ {
 		isSpace := unicode.IsSpace(rune(tb.text[i]))
 		newLine := i == 0 || tb.text[i - 1] == '\n'
@@ -120,6 +122,16 @@ func (tb *TextBox) writeText(from uint, to uint) error {
 	}
 
 	return nil
+}
+
+func (tb *TextBox) InAnimation() bool {
+	return tb.textAnimation != nil &&
+		!tb.textAnimation.cancelled &&
+		tb.textAnimation.charactersWritten < uint(len(tb.text))
+}
+
+func (tb *TextBox) SkipAnimation() {
+	tb.textAnimation.skip = true
 }
 
 func (tb *TextBox) Draw(t pixel.Target, matrix pixel.Matrix) {
