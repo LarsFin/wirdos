@@ -9,6 +9,13 @@ import (
 	"github.com/wirdos/util"
 )
 
+type GameState int
+
+const (
+	InPlay GameState = iota
+	InDialogue GameState= iota
+)
+
 type Game struct {
 	player *Player
 	camera *Camera
@@ -22,36 +29,54 @@ type Game struct {
 
 	dialogue *Dialogue
 
+	state GameState
 	window *opengl.Window
 }
 
 func (g *Game) Update() {
-	// update delta time
+	// always update delta time and input first
 	util.UpdateDeltaTime()
-
-	// update input first
 	g.input.Update()
 
 	g.player.Update()
-
-	// check whether game is requested to close
 	if g.player.RequestsExit() {
 		g.window.SetClosed(true)
 		return
 	}
 
-	g.character.Update()
+	switch g.state {
+	case InPlay:
+		g.character.Update()
+
+		if g.character.IsInteracting() {
+			g.setState(InDialogue)
+		}
+	case InDialogue:
+		g.ui.Update()
+	}
 
 	g.camera.Update()
-	g.ui.Update()
 
-	// TODO: workout render pipeline flow here, or at least improve structuring
+	// TODO: work out render pipeline flow here, or at least improve structuring
 	g.window.Clear(pixel.RGB(1, 1, 1))
 
 	g.camera.Render()
 	g.ui.Render()
 
 	g.window.Update()
+}
+
+func (g *Game) setState(state GameState) {
+	g.state = state
+
+	switch state {
+	case InDialogue:
+		g.player.SetPuppet(g.dialogue)
+		return;
+	case InPlay:
+		g.player.SetPuppet(g.character)
+		return;
+	}
 }
 
 func NewGame(window *opengl.Window) (*Game, error) {
@@ -88,9 +113,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	// quite work out why or what it should be instead...
 	dialogue := NewDialogue(ui)
 
-	// TODO: purely for testing...
-	player.SetPuppet(dialogue)
-
 	return &Game{
 		player: player,
 		camera: camera,
@@ -100,5 +122,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		ui: ui,
 		stage: stage,
 		dialogue: dialogue,
+		state: InPlay,
 	}, nil
 }

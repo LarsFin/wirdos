@@ -1,8 +1,6 @@
 package actors
 
 import (
-	"fmt"
-
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/directors/input"
 	"github.com/wirdos/util"
@@ -13,8 +11,11 @@ type Character struct {
 	body  *util.Body
 	face *util.Face
 	velocity pixel.Vec
+	attemptInteraction bool
 	facingDirection pixel.Vec
 	stage *Stage
+
+	isInteracting bool
 }
 
 func (c *Character) Update() {
@@ -24,12 +25,14 @@ func (c *Character) Update() {
 		c.body.Move(c.velocity, c.stage.Walls)
 	}
 
+	c.assertInteraction()
+
 	c.face.Update(c.body.Position)
 }
 
 func (c *Character) FeedInput(input *input.Input) {
 	c.processDirection(input.Direction)
-	c.processInteract(input.Interact)
+	c.attemptInteraction = input.Interact
 }
 
 func (c *Character) processDirection(direction pixel.Vec) {
@@ -40,15 +43,24 @@ func (c *Character) processDirection(direction pixel.Vec) {
 	}
 }
 
-func (c *Character) processInteract(interact bool) {
-	if interact {
+func (c *Character) assertInteraction() {
+	if c.attemptInteraction {
 		interactPoint := c.facingDirection.Scaled(16).Add(c.body.Position)
 		for _, prop := range c.stage.Props {
 			if prop.Interacting(interactPoint) {
-				fmt.Print("Interacting with prop.\n")
+				c.isInteracting = true
+				return
 			}
 		}
 	}
+
+	c.isInteracting = false
+}
+
+// TODO: WIP, should return an interaction object that can be used to
+// flow game logic
+func (c *Character) IsInteracting() bool {
+	return c.isInteracting
 }
 
 func (c *Character) Pos() pixel.Vec {

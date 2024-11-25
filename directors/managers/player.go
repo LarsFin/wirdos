@@ -5,6 +5,7 @@ import (
 )
 
 type Player struct {
+	// for now we assume the player can only control one playable entity at a time
 	puppet Playable
 	controller input.InputController
 

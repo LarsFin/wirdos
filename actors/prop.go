@@ -21,7 +21,6 @@ func (p *Prop) Face() *util.Face {
 
 // TODO: a prop should return some data when interacted with so other party knows what behaviour to take
 func (p *Prop) Interacting(point pixel.Vec) bool {
-	fmt.Printf("Checking if %v is in %v\n", point, p.interactiveArea)
 	return p.interactiveArea.Contains(point)
 }
 
