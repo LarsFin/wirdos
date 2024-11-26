@@ -3,6 +3,7 @@ package actors
 import (
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/directors/input"
+	"github.com/wirdos/events"
 	"github.com/wirdos/util"
 )
 
@@ -15,7 +16,7 @@ type Character struct {
 	facingDirection pixel.Vec
 	stage *Stage
 
-	isInteracting bool
+	eventPipeline *events.Pipeline
 }
 
 func (c *Character) Update() {
@@ -48,19 +49,12 @@ func (c *Character) assertInteraction() {
 		interactPoint := c.facingDirection.Scaled(16).Add(c.body.Position)
 		for _, prop := range c.stage.Props {
 			if prop.Interacting(interactPoint) {
-				c.isInteracting = true
+				// TODO: add interaction event to pipeline
+				c.eventPipeline.PushEvent(events.NewDialogueEvent("test", "demo"))
 				return
 			}
 		}
 	}
-
-	c.isInteracting = false
-}
-
-// TODO: WIP, should return an interaction object that can be used to
-// flow game logic
-func (c *Character) IsInteracting() bool {
-	return c.isInteracting
 }
 
 func (c *Character) Pos() pixel.Vec {
@@ -76,7 +70,7 @@ func (c *Character) PlaceOnStage(stage *Stage) {
 	c.body.Position = stage.SpawnPoint()
 }
 
-func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {
+func NewCharacter(pos pixel.Vec, speed float64, eventPipeline *events.Pipeline) (*Character, error) {
 	// TODO: sprite map isn't different to texture map, should update so a palette is used here
 	spriteMap, err := util.NewPalette("character")
 
@@ -89,5 +83,6 @@ func NewCharacter(pos pixel.Vec, speed float64) (*Character, error) {
 		body:  util.NewBody(pos, pixel.R(-4, -8, 4, 0)),
 		face: util.NewFace(0, spriteMap, "right", pos),
 		velocity: pixel.ZV,
+		eventPipeline: eventPipeline,
 	}, nil
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
 	"github.com/wirdos/directors/input"
+	"github.com/wirdos/events"
 	"github.com/wirdos/ui"
 	"github.com/wirdos/util"
 )
@@ -31,6 +32,8 @@ type Game struct {
 
 	state GameState
 	window *opengl.Window
+
+	eventPipeline *events.Pipeline
 }
 
 func (g *Game) Update() {
@@ -48,7 +51,11 @@ func (g *Game) Update() {
 	case InPlay:
 		g.character.Update()
 
-		if g.character.IsInteracting() {
+		dialogueEvent := events.PopEventOfType[*events.DialogueEvent](g.eventPipeline)
+
+		if dialogueEvent != nil {
+			// TODO: use dialogue event script name...
+			g.dialogue.BeginScript()
 			g.setState(InDialogue)
 		}
 	case InDialogue:
@@ -83,9 +90,11 @@ func NewGame(window *opengl.Window) (*Game, error) {
 	// TODO: this setup should obviously not be hardcoded here
 	center := window.Bounds().Center()
 
+	eventPipeline := events.NewPipeline()
+
 	player := NewPlayer()
 	input := input.NewKeyboardMouse(window)
-	character, err := actors.NewCharacter(center, 72)
+	character, err := actors.NewCharacter(center, 72, eventPipeline)
 
 	if err != nil {
 		return nil, err
@@ -123,5 +132,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 		stage: stage,
 		dialogue: dialogue,
 		state: InPlay,
+		eventPipeline: eventPipeline,
 	}, nil
 }
