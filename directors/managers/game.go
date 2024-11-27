@@ -51,15 +51,21 @@ func (g *Game) Update() {
 	case InPlay:
 		g.character.Update()
 
-		dialogueEvent := events.PopEventOfType[*events.DialogueEvent](g.eventPipeline)
+		startDialogueEvent := g.eventPipeline.PullEventOfType(events.StartDialogue)
 
-		if dialogueEvent != nil {
+		if startDialogueEvent != nil {
 			// TODO: use dialogue event script name...
 			g.dialogue.BeginScript()
 			g.setState(InDialogue)
 		}
 	case InDialogue:
 		g.ui.Update()
+
+		endDialogueEvent := g.eventPipeline.PullEventOfType(events.EndDialogue)
+
+		if endDialogueEvent != nil {
+			g.setState(InPlay)
+		}
 	}
 
 	g.camera.Update()
@@ -120,7 +126,7 @@ func NewGame(window *opengl.Window) (*Game, error) {
 
 	// TODO: this really makes me feel like dialogue shouldn't be a manager but I can't
 	// quite work out why or what it should be instead...
-	dialogue := NewDialogue(ui)
+	dialogue := NewDialogue(ui, eventPipeline)
 
 	return &Game{
 		player: player,

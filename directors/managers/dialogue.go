@@ -2,6 +2,7 @@ package managers
 
 import (
 	"github.com/wirdos/directors/input"
+	"github.com/wirdos/events"
 	"github.com/wirdos/ui"
 )
 
@@ -9,6 +10,7 @@ import (
 type Dialogue struct {
 	ui *ui.UI
 	dialogueBox *ui.DialogueBox
+	eventPipeline *events.Pipeline
 }
 
 func (d *Dialogue) FeedInput(input *input.Input) {
@@ -19,6 +21,8 @@ func (d *Dialogue) FeedInput(input *input.Input) {
 			} else {
 				d.dialogueBox.Destroy()
 				d.dialogueBox = nil
+				// TODO: sucks that this still has to be passed a resource name...
+				d.eventPipeline.PushEvent(events.NewEvent(events.EndDialogue, "demo"))
 			}
 		} else {
 			d.BeginScript()
@@ -37,8 +41,9 @@ func (d *Dialogue) BeginScript() {
 	d.ui.AddComponent(dialogueBox)
 }
 
-func NewDialogue(ui *ui.UI) *Dialogue {
+func NewDialogue(ui *ui.UI, eventPipeline *events.Pipeline) *Dialogue {
 	return &Dialogue{
 		ui: ui,
+		eventPipeline: eventPipeline,
 	}
 }

@@ -1,34 +1,20 @@
 package events
 
-type Event interface {
-	Id() string
-	Idempotent() bool
+type EventType int
+
+const (
+	StartDialogue EventType = iota
+	EndDialogue EventType = iota
+)
+
+type Event struct {
+	Type EventType
+	ResourceName string
 }
 
-type DialogueEvent struct {
-	id string
-	scriptName string
-}
-
-func (de *DialogueEvent) Id() string {
-	return de.id
-}
-
-func (de *DialogueEvent) Type() string {
-	return "dialogue"
-}
-
-func (de *DialogueEvent) Idempotent() bool {
-	return true
-}
-
-func (de *DialogueEvent) ScriptName() string {
-	return de.scriptName
-}
-
-func NewDialogueEvent(id, scriptName string) *DialogueEvent {
-	return &DialogueEvent{
-		id: id,
-		scriptName: scriptName,
+func NewEvent(eventType EventType, resourceName string) *Event {
+	return &Event{
+		Type: eventType,
+		ResourceName: resourceName,
 	}
 }
