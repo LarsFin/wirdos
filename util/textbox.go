@@ -60,6 +60,7 @@ func (tb *TextBox) Update() {
 
 	if tb.textAnimation.skip {
 		byFrameCharactersWritten = uint(len(tb.text))
+		tb.textAnimation.skip = false
 	} else {
 		toWriteThisFrame := uint(math.Floor(tb.textAnimation.timeSinceLastWrite / tick))
 		byFrameCharactersWritten = uint(math.Min(
