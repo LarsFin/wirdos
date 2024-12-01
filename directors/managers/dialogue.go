@@ -1,8 +1,11 @@
 package managers
 
 import (
+	"fmt"
+
 	"github.com/wirdos/directors/input"
 	"github.com/wirdos/events"
+	"github.com/wirdos/resources"
 	"github.com/wirdos/ui"
 )
 
@@ -11,34 +14,65 @@ type Dialogue struct {
 	ui *ui.UI
 	dialogueBox *ui.DialogueBox
 	eventPipeline *events.Pipeline
+
+	currentScript *resources.ScriptData
+	lineNum int
 }
 
 func (d *Dialogue) FeedInput(input *input.Input) {
-	if input.Interact {
-		if d.dialogueBox != nil {
-			if d.dialogueBox.CurrentlyAnimating() {
-				d.dialogueBox.SkipTextAnimation()
-			} else {
-				d.dialogueBox.Destroy()
-				d.dialogueBox = nil
-				// TODO: sucks that this still has to be passed a resource name...
-				d.eventPipeline.PushEvent(events.NewEvent(events.EndDialogue, "demo"))
-			}
+	if input.Interact && d.currentScript != nil {
+		if d.dialogueBox.CurrentlyAnimating() {
+			d.dialogueBox.SkipTextAnimation()
 		} else {
-			d.BeginScript()
+			d.NextLine()
 		}
 	}
 }
 
-// TODO: should take script
-func (d *Dialogue) BeginScript() {
-	dialogueBox := ui.NewDialogueBox(d.ui.Theme())
-	dialogueBox.WriteText(
-		"This is a very long piece of text which is printed on multiple lines by code and not designed with newlines as part of design... at least I hope so, it's designed so to split on word but there is a question of the text size which possibly overlaps no?",
+func (d *Dialogue) BeginScript(scriptName string) error {
+	d.lineNum = 0
+	script, err := resources.LoadJSON[resources.ScriptData](
+		fmt.Sprintf("scripts/%s/%s", resources.GameOptions.GetLanguage(), scriptName),
 	)
 
+	if err != nil {
+		return err
+	}
+
+	d.currentScript = script
+
+	dialogueBox := ui.NewDialogueBox(d.ui.Theme())
 	d.dialogueBox = dialogueBox
 	d.ui.AddComponent(dialogueBox)
+
+	d.NextLine()
+
+	return nil
+}
+
+func (d *Dialogue) NextLine() {
+	if d.currentScript == nil {
+		return
+	}
+
+	if d.lineNum >= len(d.currentScript.Lines) {
+		d.scriptFinished()
+		return
+	}
+
+	line := d.currentScript.Lines[d.lineNum]
+	d.dialogueBox.WriteText(line.Text)
+	d.lineNum++
+}
+
+func (d *Dialogue) scriptFinished() {
+	d.dialogueBox.Destroy()
+	d.dialogueBox = nil
+	d.currentScript = nil
+	d.lineNum = 0
+
+	// TODO: resource name should not be required for this kind of event
+	d.eventPipeline.PushEvent(events.NewEvent(events.EndDialogue, "demo"))
 }
 
 func NewDialogue(ui *ui.UI, eventPipeline *events.Pipeline) *Dialogue {

@@ -68,3 +68,12 @@ type StagePropData struct {
 	Key string `json:"key"`
 	Position Vec `json:"position"`
 }
+
+type ScriptData struct {
+	Lines []LineData `json:"lines"`
+}
+
+type LineData struct {
+	Character string `json:"character"`
+	Text string `json:"text"`
+}

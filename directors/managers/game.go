@@ -55,7 +55,7 @@ func (g *Game) Update() {
 
 		if startDialogueEvent != nil {
 			// TODO: use dialogue event script name...
-			g.dialogue.BeginScript()
+			g.dialogue.BeginScript("demo")
 			g.setState(InDialogue)
 		}
 	case InDialogue:
