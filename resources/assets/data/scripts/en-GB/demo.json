@@ -1,11 +1,11 @@
 {
     "lines": [
         {
-            "actor": "Character",
+            "character": "Sof",
             "text": "This is a demo line of a script."
         },
         {
-            "actor": "Character",
+            "character": "Sof",
             "text": "With the en-GB locale."
         }
     ]
