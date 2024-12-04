@@ -2,11 +2,10 @@ package ui
 
 import (
 	"github.com/gopxl/pixel/v2"
+	"github.com/wirdos/resources"
 	"github.com/wirdos/util"
 )
 
-// TODO: this should really be DialogueBox, then a separate definition could exist
-// for DialogueBox around text behaviour and helpers (potentially existing solution?)
 type DialogueBox struct {
 	characterName *util.TextBox
 	textBox *util.TextBox
@@ -18,12 +17,9 @@ func (tb *DialogueBox) Update() {
 	tb.textBox.Update()
 }
 
-func (tb *DialogueBox) WriteName(name string) {
-	tb.characterName.SetText(name)
-}
-
-func (tb *DialogueBox) WriteText(text string) {
-	tb.textBox.SetText(text)
+func (tb *DialogueBox) WriteLine(line resources.LineData) {
+	tb.characterName.SetText(line.Character)
+	tb.textBox.SetText(line.Text)
 }
 
 func (tb *DialogueBox) Draw(t pixel.Target) {

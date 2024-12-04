@@ -61,8 +61,7 @@ func (d *Dialogue) NextLine() {
 	}
 
 	line := d.currentScript.Lines[d.lineNum]
-	d.dialogueBox.WriteName(line.Character)
-	d.dialogueBox.WriteText(line.Text)
+	d.dialogueBox.WriteLine(line)
 	d.lineNum++
 }
 
