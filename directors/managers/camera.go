@@ -50,20 +50,24 @@ func (c *Camera) Render() {
 	c.window.SetMatrix(pixel.IM.Moved(mp).Scaled(mp, c.zoom))
 
 	drawables := c.stage.GetDrawables()
+	c.draw(drawables)
+
+	// UI is rendered last onto the camera as it's always foreground, we also need to apply an IM
+	// to the window as we want UI components to be rendered staticially
+	c.window.SetMatrix(pixel.IM)
+
+	drawables = c.ui.GetDrawables()
+	c.draw(drawables)
+}
+
+// handles ordering of drawable entities before making draw call to GPU
+func (c *Camera) draw(drawables []util.Drawable) {
 	sort.Slice(drawables, func(i, j int) bool {
 		return drawables[i].Layer() > drawables[j].Layer()
 	})
 
 	for _, drawable := range drawables {
 		drawable.Draw(c.window)
-	}
-
-	// UI is rendered last onto the camera as it's always foreground, we also need to apply an IM
-	// to the window as we want UI components to be rendered staticially
-	c.window.SetMatrix(pixel.IM)
-
-	for _, component := range c.ui.Components() {
-		component.Draw(c.window)
 	}
 }
 

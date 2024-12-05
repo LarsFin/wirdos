@@ -44,6 +44,10 @@ func (tb *DialogueBox) CurrentlyAnimating() bool {
 	return tb.textBox.InAnimation()
 }
 
+func (tb *DialogueBox) Layer() int8 {
+	return 0
+}
+
 func characterNameAreaBox(dialogueArea pixel.Rect) pixel.Rect {
 	return pixel.R(
 		dialogueArea.Min.X + 32,

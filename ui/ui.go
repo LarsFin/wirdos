@@ -3,16 +3,12 @@ package ui
 import (
 	"slices"
 
-	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/gopxl/pixel/v2/ext/text"
 	"github.com/wirdos/util"
 	"golang.org/x/image/font/basicfont"
 )
 
-// UI isn't rendered through the camera, this is to avoid it being transformed
-// based on the camera's matrix, it should be simply directly rendered to the
-// view based on fixed coordinates
 type UI struct {
 	components []UIComponent
 	window *opengl.Window
@@ -40,8 +36,17 @@ func (ui *UI) Update() {
 // written to the batch as it's not the same picture, if it's not part of the same
 // batch it's likely there could be layering issues. To come back to after looking
 // more into font atlases
-func (ui *UI) Components() []UIComponent {
-	return ui.components
+func (ui *UI) GetDrawables() []util.Drawable {
+	// TODO: surely this isn't necessary when a ui component implements drawable
+	// anyway? something to do with arrays here, perhaps array of T does not fulfil
+	// type of array of TN where TN is subset of T
+	drawables := make([]util.Drawable, len(ui.components))
+
+	for i, component := range ui.components {
+		drawables[i] = component
+	}
+
+	return drawables
 }
 
 func (ui *UI) AddComponent(c UIComponent) {
@@ -76,6 +81,6 @@ func NewUI(window *opengl.Window) (*UI, error) {
 
 type UIComponent interface {
 	Update()
-	Draw(pixel.Target)
 	IsDestroyed() bool
+	util.Drawable
 }
