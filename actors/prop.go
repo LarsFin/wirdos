@@ -44,15 +44,6 @@ func NewProp(name string, pos pixel.Vec) (*Prop, error) {
 
 	face := util.NewFace(data.Layer, palette, data.Palette.InitialKey, pos)
 
-	var event *events.Event
-
-	switch data.InteractionEvent.Type {
-	case "start_dialogue":
-		event = events.NewEvent(events.StartDialogue, data.InteractionEvent.ResourceName)
-	default:
-		return nil, fmt.Errorf("unknown event type '%s' provided", data.InteractionEvent.Type)
-	}
-
 	return &Prop{
 		face: face,
 		interactiveArea: pixel.R(
@@ -61,6 +52,6 @@ func NewProp(name string, pos pixel.Vec) (*Prop, error) {
 			pos.X+data.InteractiveDimensions.X/2,
 			pos.Y+data.InteractiveDimensions.Y/2,
 		),
-		interactionEvent: event,
+		interactionEvent: events.FromData(data.InteractionEvent),
 	}, nil
 }

@@ -71,7 +71,6 @@ type StagePropData struct {
 }
 
 type Event struct {
-	// TODO: would be cool to marshall an events.EventType here
 	Type string `json:"type"`
 	ResourceName string `json:"resourceName"`
 }
