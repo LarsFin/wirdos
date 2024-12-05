@@ -57,6 +57,7 @@ type PropData struct {
 	Layer int8 `json:"layer"`
 	Palette PropPaletteData `json:"palette"`
 	InteractiveDimensions Vec `json:"interactiveDimensions"`
+	InteractionEvent Event `json:"interactionEvent"`
 }
 
 type PropPaletteData struct {
@@ -67,6 +68,12 @@ type PropPaletteData struct {
 type StagePropData struct {
 	Key string `json:"key"`
 	Position Vec `json:"position"`
+}
+
+type Event struct {
+	// TODO: would be cool to marshall an events.EventType here
+	Type string `json:"type"`
+	ResourceName string `json:"resourceName"`
 }
 
 type ScriptData struct {

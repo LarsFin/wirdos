@@ -7,5 +7,9 @@
     "interactiveDimensions": {
         "x": 16,
         "y": 16
+    },
+    "interactionEvent": {
+        "type": "start_dialogue",
+        "resourceName": "demo"
     }
 }

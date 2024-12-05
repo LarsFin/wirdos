@@ -48,9 +48,10 @@ func (c *Character) assertInteraction() {
 	if c.attemptInteraction {
 		interactPoint := c.facingDirection.Scaled(16).Add(c.body.Position)
 		for _, prop := range c.stage.Props {
-			if prop.Interacting(interactPoint) {
-				// TODO: this should come from the prop instead
-				c.eventPipeline.PushEvent(events.NewEvent(events.StartDialogue, "demo"))
+			interactionEvent := prop.Interaction(interactPoint)
+
+			if interactionEvent != nil {
+				c.eventPipeline.PushEvent(interactionEvent)
 				return
 			}
 		}

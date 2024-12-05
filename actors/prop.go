@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gopxl/pixel/v2"
+	"github.com/wirdos/events"
 	"github.com/wirdos/resources"
 	"github.com/wirdos/util"
 )
@@ -13,15 +14,19 @@ import (
 type Prop struct {
 	face *util.Face
 	interactiveArea pixel.Rect
+	interactionEvent *events.Event
 }
 
 func (p *Prop) Face() *util.Face {
 	return p.face
 }
 
-// TODO: a prop should return some data when interacted with so other party knows what behaviour to take
-func (p *Prop) Interacting(point pixel.Vec) bool {
-	return p.interactiveArea.Contains(point)
+func (p *Prop) Interaction(point pixel.Vec) *events.Event {
+	if p.interactiveArea.Contains(point) {
+		return p.interactionEvent
+	}
+
+	return nil
 }
 
 func NewProp(name string, pos pixel.Vec) (*Prop, error) {
@@ -39,6 +44,15 @@ func NewProp(name string, pos pixel.Vec) (*Prop, error) {
 
 	face := util.NewFace(data.Layer, palette, data.Palette.InitialKey, pos)
 
+	var event *events.Event
+
+	switch data.InteractionEvent.Type {
+	case "start_dialogue":
+		event = events.NewEvent(events.StartDialogue, data.InteractionEvent.ResourceName)
+	default:
+		return nil, fmt.Errorf("unknown event type '%s' provided", data.InteractionEvent.Type)
+	}
+
 	return &Prop{
 		face: face,
 		interactiveArea: pixel.R(
@@ -47,5 +61,6 @@ func NewProp(name string, pos pixel.Vec) (*Prop, error) {
 			pos.X+data.InteractiveDimensions.X/2,
 			pos.Y+data.InteractiveDimensions.Y/2,
 		),
+		interactionEvent: event,
 	}, nil
 }
