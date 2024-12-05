@@ -43,6 +43,8 @@ func (c *Camera) Update() {
 }
 
 func (c *Camera) Render() {
+	c.window.Clear(pixel.RGB(1, 1, 1))
+
 	// we have to translate by the inverse to ensure components are rendered in their respected
 	// position, this then helps to ensure the 'camera position' is correctly plained against
 	// world coordinates
@@ -58,6 +60,8 @@ func (c *Camera) Render() {
 
 	drawables = c.ui.GetDrawables()
 	c.draw(drawables)
+
+	c.window.Update()
 }
 
 // handles ordering of drawable entities before making draw call to GPU

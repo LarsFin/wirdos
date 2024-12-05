@@ -1,7 +1,6 @@
 package managers
 
 import (
-	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
 	"github.com/wirdos/directors/input"
@@ -54,8 +53,7 @@ func (g *Game) Update() {
 		startDialogueEvent := g.eventPipeline.PullEventOfType(events.StartDialogue)
 
 		if startDialogueEvent != nil {
-			// TODO: use dialogue event script name...
-			g.dialogue.BeginScript("demo")
+			g.dialogue.BeginScript(startDialogueEvent.ResourceName)
 			g.setState(InDialogue)
 		}
 	case InDialogue:
@@ -69,13 +67,7 @@ func (g *Game) Update() {
 	}
 
 	g.camera.Update()
-
-	// TODO: work out render pipeline flow here, or at least improve structuring
-	g.window.Clear(pixel.RGB(1, 1, 1))
-
 	g.camera.Render()
-
-	g.window.Update()
 }
 
 func (g *Game) setState(state GameState) {
