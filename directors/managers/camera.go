@@ -6,11 +6,13 @@ import (
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/actors"
+	"github.com/wirdos/ui"
 	"github.com/wirdos/util"
 )
 
 type Camera struct {
 	stage *actors.Stage
+	ui *ui.UI
 	pos pixel.Vec
 	zoom float64
 	window *opengl.Window
@@ -55,6 +57,14 @@ func (c *Camera) Render() {
 	for _, drawable := range drawables {
 		drawable.Draw(c.window)
 	}
+
+	// UI is rendered last onto the camera as it's always foreground, we also need to apply an IM
+	// to the window as we want UI components to be rendered staticially
+	c.window.SetMatrix(pixel.IM)
+
+	for _, component := range c.ui.Components() {
+		component.Draw(c.window)
+	}
 }
 
 func (c *Camera) worldView() pixel.Rect {
@@ -67,9 +77,10 @@ func (c *Camera) worldView() pixel.Rect {
 	)
 }
 
-func NewCamera(window *opengl.Window, pos pixel.Vec, zoom float64, stage *actors.Stage) *Camera {
+func NewCamera(window *opengl.Window, pos pixel.Vec, zoom float64, stage *actors.Stage, ui *ui.UI) *Camera {
 	return &Camera{
 		stage: stage,
+		ui: ui,
 		pos: pos,
 		zoom: zoom,
 		window: window,

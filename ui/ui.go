@@ -33,17 +33,15 @@ func (ui *UI) Update() {
 	}
 }
 
-func (ui *UI) Render() {
-	ui.window.SetMatrix(pixel.IM)
-
-	// TODO: look into whether it's possible to batch here, it would be easy if the
-	// components only used sprites from the ui-elements files but they're also going
-	// to commonly write text. The problem there is that the text can't be written to
-	// the batch as it's not the same picture, if it's not part of the same batch it's
-	// likely there could be layering issues
-	for _, component := range ui.components {
-		component.Draw(ui.window)
-	}
+// TODO: look into whether it's possible to batch here and return a list of batches
+// instead of individual components which would require separate calls. It would be
+// easy if the components only used sprites from the ui-elements files but they're
+// also going to commonly write text. The problem there is that the text can't be
+// written to the batch as it's not the same picture, if it's not part of the same
+// batch it's likely there could be layering issues. To come back to after looking
+// more into font atlases
+func (ui *UI) Components() []UIComponent {
+	return ui.components
 }
 
 func (ui *UI) AddComponent(c UIComponent) {

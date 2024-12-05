@@ -74,7 +74,6 @@ func (g *Game) Update() {
 	g.window.Clear(pixel.RGB(1, 1, 1))
 
 	g.camera.Render()
-	g.ui.Render()
 
 	g.window.Update()
 }
@@ -117,12 +116,13 @@ func NewGame(window *opengl.Window) (*Game, error) {
 
 	character.PlaceOnStage(stage)
 
-	camera := NewCamera(window, center, 4, stage)
 	ui, err := ui.NewUI(window)
 
 	if err != nil {
 		return nil, err
 	}
+
+	camera := NewCamera(window, center, 4, stage, ui)
 
 	// TODO: this really makes me feel like dialogue shouldn't be a manager but I can't
 	// quite work out why or what it should be instead...
