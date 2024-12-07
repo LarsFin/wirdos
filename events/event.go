@@ -22,6 +22,8 @@ func FromData(eventData resources.Event) *Event {
 	switch eventData.Type {
 	case "start_dialogue":
 		return NewEvent(StartDialogue, eventData.ResourceName)
+	case "end_dialogue":
+		return NewSimpleEvent(EndDialogue)
 	default:
 		// TODO: consider better logger down the road
 		fmt.Printf("warning: could not map event from data event-type '%s'", eventData.Type)
@@ -33,5 +35,11 @@ func NewEvent(eventType EventType, resourceName string) *Event {
 	return &Event{
 		Type: eventType,
 		ResourceName: resourceName,
+	}
+}
+
+func NewSimpleEvent(eventType EventType) *Event {
+	return &Event{
+		Type: eventType,
 	}
 }

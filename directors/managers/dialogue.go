@@ -71,8 +71,7 @@ func (d *Dialogue) scriptFinished() {
 	d.currentScript = nil
 	d.lineNum = 0
 
-	// TODO: resource name should not be required for this kind of event
-	d.eventPipeline.PushEvent(events.NewEvent(events.EndDialogue, "demo"))
+	d.eventPipeline.PushEvent(events.NewSimpleEvent(events.EndDialogue))
 }
 
 func NewDialogue(ui *ui.UI, eventPipeline *events.Pipeline) *Dialogue {

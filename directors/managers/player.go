@@ -14,9 +14,6 @@ type Player struct {
 
 func (p *Player) Update() {
 	input := p.controller.Input()
-
-	// TODO: currently only one input type, but the idea is that the player
-	// knows how to decipher different input mechanisms to direct puppet
 	p.puppet.FeedInput(input)
 	p.requestsExit = input.Exit
 }

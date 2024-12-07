@@ -72,8 +72,7 @@ func (c *Character) PlaceOnStage(stage *Stage) {
 }
 
 func NewCharacter(pos pixel.Vec, speed float64, eventPipeline *events.Pipeline) (*Character, error) {
-	// TODO: sprite map isn't different to texture map, should update so a palette is used here
-	spriteMap, err := util.NewPalette("character")
+	palette, err := util.NewPalette("character")
 
 	if err != nil {
 		return nil, err
@@ -82,7 +81,7 @@ func NewCharacter(pos pixel.Vec, speed float64, eventPipeline *events.Pipeline) 
 	return &Character{
 		speed: speed,
 		body:  util.NewBody(pos, pixel.R(-4, -8, 4, 0)),
-		face: util.NewFace(0, spriteMap, "right", pos),
+		face: util.NewFace(0, palette, "right", pos),
 		velocity: pixel.ZV,
 		eventPipeline: eventPipeline,
 	}, nil

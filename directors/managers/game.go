@@ -116,8 +116,6 @@ func NewGame(window *opengl.Window) (*Game, error) {
 
 	camera := NewCamera(window, center, 4, stage, ui)
 
-	// TODO: this really makes me feel like dialogue shouldn't be a manager but I can't
-	// quite work out why or what it should be instead...
 	dialogue := NewDialogue(ui, eventPipeline)
 
 	return &Game{

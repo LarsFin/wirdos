@@ -3,7 +3,6 @@ package actors
 // Is this the right place to put the stage, in 'actors'? Difficulty is that otherwise
 // we design a cyclic package dependency as actors need to know about the stage and the
 // stage needs to know about actors
-// TODO: ponder whether this is the right place for the stage
 
 import (
 	"fmt"
