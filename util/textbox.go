@@ -7,6 +7,7 @@ import (
 
 	"github.com/gopxl/pixel/v2"
 	"github.com/gopxl/pixel/v2/ext/text"
+	"github.com/wirdos/logger"
 )
 
 // A helper for styling and formatting text given a defined container, for
@@ -74,8 +75,7 @@ func (tb *TextBox) Update() {
 	err := tb.writeText(tb.textAnimation.charactersWritten, byFrameCharactersWritten)
 
 	if err != nil {
-		// TODO: use logger here probably
-		fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+		logger.Warn(fmt.Sprintf("failed to write text: (%s) to container: %v", tb.text, tb.bounds))
 		tb.textAnimation.cancelled = true
 		return
 	}
@@ -150,8 +150,7 @@ func (tb *TextBox) SetText(s string) {
 	} else {
 		err := tb.writeText(0, uint(len(s)))
 		if err != nil {
-			// TODO: consider logger, also refactor how this is logged
-			fmt.Printf("Failed to write text: (%s) to container: %v", tb.text, tb.bounds)
+			logger.Warn(fmt.Sprintf("failed to write text: (%s) to container: %v", tb.text, tb.bounds))
 		}
 	}
 }

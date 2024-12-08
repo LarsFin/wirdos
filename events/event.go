@@ -3,6 +3,7 @@ package events
 import (
 	"fmt"
 
+	"github.com/wirdos/logger"
 	"github.com/wirdos/resources"
 )
 
@@ -25,8 +26,7 @@ func FromData(eventData resources.Event) *Event {
 	case "end_dialogue":
 		return NewSimpleEvent(EndDialogue)
 	default:
-		// TODO: consider better logger down the road
-		fmt.Printf("warning: could not map event from data event-type '%s'", eventData.Type)
+		logger.Warn(fmt.Sprintf("could not map event from data event-type '%s'", eventData.Type))
 		return nil
 	}
 }
