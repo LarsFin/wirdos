@@ -7,6 +7,7 @@ import (
 	"github.com/gopxl/pixel/v2/backends/opengl"
 	"github.com/wirdos/directors/managers"
 	"github.com/wirdos/logger"
+	"github.com/wirdos/util"
 )
 
 func run() {
@@ -33,9 +34,8 @@ func run() {
 }
 
 func main() {
-	// initialise logger
-	// TODO: determine config here to set level + output
-	logger.InitLogger("file")
+	config := util.LoadConfig()
+	logger.InitLogger(config.LogMethod, config.LogLevel)
 
 	opengl.Run(run)
 }

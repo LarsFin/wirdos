@@ -1,3 +1,5 @@
+github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
+github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/faiface/glhf v0.0.0-20211013000516-57b20770c369 h1:gv4BgP50atccdK/1tZHDyP6rMwiiutR2HPreR/OyLzI=
 github.com/faiface/glhf v0.0.0-20211013000516-57b20770c369/go.mod h1:dDdUO+G9ZnJ9sc8nIUvhLkE45k8PEKW6+A3TdWsfpV0=
 github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 h1:baVdMKlASEHrj19iqjARrPbaRisD7EuZEVJj6ZMLl1Q=

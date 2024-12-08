@@ -43,8 +43,10 @@ func logPrefix(level lglvl) string {
 	return t.Format("2006-01-02 15:04:05") + " [" + level.String() + "] "
 }
 
-func InitLogger(logMethod string) error {
+func InitLogger(logMethod string, logLevel string) {
 	var err error
+	
+	level = parseLglvl(logLevel)
 
 	switch logMethod {
 	case "file":
@@ -52,14 +54,13 @@ func InitLogger(logMethod string) error {
 	case "console":
 		logger = &consoleLogger{}
 	default:
-		err = fmt.Errorf("unknown log method '%s'", logMethod)
+		err = fmt.Errorf("unknown log method '%s', using console logger", logMethod)
 	}
 
 	if err != nil {
-		return err
+		fmt.Printf("failed to initialise logger, error: %s\n", err)
+		logger = &consoleLogger{}
 	}
-
-	return nil
 }
 
 func Debug(msg string) {
@@ -85,4 +86,20 @@ func Warn(msg string) {
 
 func Error(err error) {
 	logger.err(err)
+}
+
+func parseLglvl(s string) lglvl {
+	switch s {
+	case "debug":
+		return debug
+	case "info":
+		return info
+	case "warn":
+		return warn
+	case "error":
+		return erro
+	}
+
+	fmt.Printf("unknown log level '%s', using info level\n", s)
+	return info
 }
