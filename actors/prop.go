@@ -5,6 +5,7 @@ import (
 
 	"github.com/gopxl/pixel/v2"
 	"github.com/wirdos/events"
+	"github.com/wirdos/logger"
 	"github.com/wirdos/resources"
 	"github.com/wirdos/util"
 )
@@ -30,6 +31,11 @@ func (p *Prop) Interaction(point pixel.Vec) *events.Event {
 }
 
 func NewProp(name string, pos pixel.Vec) (*Prop, error) {
+	logger.Debug(fmt.Sprintf("loading prop '%s'", name))
+	logger.Info(fmt.Sprintf("loading prop '%s'", name))
+	logger.Warn(fmt.Sprintf("loading prop '%s'", name))
+	logger.Error(fmt.Errorf("loading prop '%s'", name))
+
 	data, err := resources.LoadJSON[resources.PropData](fmt.Sprintf("props/%s", name))
 
 	if err != nil {

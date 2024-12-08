@@ -35,7 +35,7 @@ func run() {
 func main() {
 	// initialise logger
 	// TODO: determine config here to set level + output
-	logger.InitLogger()
+	logger.InitLogger("file")
 
 	opengl.Run(run)
 }

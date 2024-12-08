@@ -3,8 +3,6 @@ package logger
 import (
 	"fmt"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 type lglvl int
@@ -40,32 +38,28 @@ type lgr interface {
 var logger lgr
 var level lglvl
 
-type consoleLogger struct {}
-
-func (l *consoleLogger) debug(msg string) {
-	color.RGB(25, 25, 25).Println(logPrefix(debug) + msg)
-}
-
-func (l *consoleLogger) info(msg string) {
-	color.White(logPrefix(info) + msg)
-}
-
-func (l *consoleLogger) warn(msg string) {
-	color.Yellow(logPrefix(warn) + msg)
-}
-
-func (l *consoleLogger) err(err error) {
-	color.Red(logPrefix(erro) + fmt.Sprintf("%s", err))
-}
-
 func logPrefix(level lglvl) string {
 	t := time.Now()
 	return t.Format("2006-01-02 15:04:05") + " [" + level.String() + "] "
 }
 
-// TODO: should determine type and level of logger based on config
-func InitLogger() {
-	logger = &consoleLogger{}
+func InitLogger(logMethod string) error {
+	var err error
+
+	switch logMethod {
+	case "file":
+		logger, err = newFileLogger("wirdos.log")
+	case "console":
+		logger = &consoleLogger{}
+	default:
+		err = fmt.Errorf("unknown log method '%s'", logMethod)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func Debug(msg string) {
