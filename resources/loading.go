@@ -9,6 +9,7 @@ import (
 
 	_ "image/png"
 
+	"github.com/BurntSushi/toml"
 	"github.com/gopxl/pixel/v2"
 )
 
@@ -54,6 +55,26 @@ func LoadJSON[K any](path string) (*K, error) {
 	var data K
 
 	err = json.Unmarshal(bytes, &data)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func LoadToml[K any](path string) (*K, error) {
+	path = fmt.Sprintf("assets/data/%s.toml", path)
+	fd, err := assets.ReadFile(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var data K
+
+	// nothing to do with metadata right now
+	_, err = toml.Decode(string(fd), data)
 
 	if err != nil {
 		return nil, err

@@ -1,0 +1,2 @@
+LogLevel = "warn"
+LogMethod = "file"
