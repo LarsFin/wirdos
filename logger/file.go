@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type fileLogger struct {
@@ -47,5 +48,11 @@ func (l *fileLogger) logFormattedError(msg string, err error) {
 }
 
 func newFileLogger(fileName string) (*fileLogger, error) {
+	ex, err := os.Executable()
+
+	if err == nil {
+		fileName = fmt.Sprintf("%s/%s", filepath.Dir(ex), fileName)
+	}
+
 	return &fileLogger{fileName: fileName}, nil
 }
