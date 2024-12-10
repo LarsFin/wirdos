@@ -16,14 +16,28 @@ type Character struct {
 	facingDirection pixel.Vec
 	stage *Stage
 
+	facingBufferSeconds float64
+	facingSeconds float64
+
 	eventPipeline *events.Pipeline
 }
 
 func (c *Character) Update() {
 	if c.velocity.Len() > 0 {
-		c.facingDirection = c.velocity.Unit()
-		c.face.SetSpriteKey(util.Direction(c.velocity))
 		c.body.Move(c.velocity, c.stage.Walls)
+
+		if c.facingDirection.Unit() != c.velocity.Unit() {
+			c.facingSeconds += util.DeltaTime
+
+			if (c.facingSeconds > c.facingBufferSeconds) {
+				c.facingDirection = c.velocity.Unit()
+				c.face.SetSpriteKey(util.Direction(c.velocity))
+			}
+		} else {
+			c.facingSeconds = 0
+		}
+	} else {
+		c.facingSeconds = 0
 	}
 
 	c.assertInteraction()
@@ -84,5 +98,7 @@ func NewCharacter(pos pixel.Vec, speed float64, eventPipeline *events.Pipeline) 
 		face: util.NewFace(0, palette, "right", pos),
 		velocity: pixel.ZV,
 		eventPipeline: eventPipeline,
+
+		facingBufferSeconds: 1. / 30,
 	}, nil
 }
