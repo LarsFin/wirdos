@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/BurntSushi/toml"
 	"github.com/wirdos/resources"
 )
 
@@ -25,28 +24,23 @@ func failedToLoadConfig(err error) {
 }
 
 func LoadConfig() *Config {
+	var config *Config
+
 	// read from root for development initially
 	data, err := os.ReadFile("config.toml")
 
-	if err != nil {
-		// if the file doesn't exist which is likely in general runtime; load bundled config
-		if os.IsNotExist(err) {
-			bundled, err := resources.LoadToml[Config]("config")
+	// if the file doesn't exist which is likely in general runtime; load bundled config
+	if os.IsNotExist(err) {
+		config, err = resources.LoadToml[Config]("config")
 
-			if err == nil {
-				return bundled
-			}
+		if err == nil {
+			return config
 		}
-
-		failedToLoadConfig(err)
-		return defaultConfig()
 	}
 
-	// TODO: refactor, we're doing this in `resources` anyway
-	var config *Config
-
-	// parse data
-	_, err = toml.Decode(string(data), &config)
+	if err == nil {
+		config, err = resources.Deserialise[Config](data, resources.TOML)
+	}
 
 	if err != nil {
 		failedToLoadConfig(err)
